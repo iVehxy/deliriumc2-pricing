@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DELIRIUMC2 Pricing</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap');
+
+  :root {
+    --bg: #050008;
+    --card: #11001c;
+    --purple: #9d00ff;
+    --purple-soft: rgba(157, 0, 255, 0.25);
+    --red: #ff003c;
+    --red-soft: rgba(255, 0, 60, 0.25);
+    --text: #ffffff;
+    --muted: #9a8fa8;
+    --line: rgba(255, 255, 255, 0.06);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(157, 0, 255, 0.10), transparent 30%),
+      radial-gradient(circle at 85% 90%, rgba(255, 0, 60, 0.10), transparent 30%);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 50px 20px 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .brand-title {
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 800;
+    margin: 0 0 8px;
+    text-align: center;
+    letter-spacing: 3px;
+  }
+  .brand-title span { color: var(--purple); text-shadow: 0 0 20px rgba(157,0,255,0.6); }
+  .brand-title em { font-style: normal; color: var(--red); text-shadow: 0 0 20px rgba(255,0,60,0.6); }
+  .subtitle { color: var(--muted); letter-spacing: 4px; font-size: 0.8rem; margin: 0 0 50px; text-transform: uppercase; }
+
+  .section-title {
+    width: 100%; max-width: 1200px; margin: 40px 0 20px;
+    font-size: 1.1rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--purple); border-bottom: 1px solid var(--purple-soft); padding-bottom: 10px;
+  }
+  .section-title.red { color: var(--red); border-color: var(--red-soft); }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 22px; max-width: 1200px; width: 100%;
+  }
+
+  .card {
+    background: var(--card); border: 1px solid var(--purple-soft); border-radius: 16px;
+    padding: 26px; position: relative; transition: 0.25s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  .card:hover { transform: translateY(-4px); border-color: var(--red); box-shadow: 0 0 24px rgba(255,0,60,0.18); }
+  .card.vip { border-color: var(--red); box-shadow: 0 0 18px rgba(255,0,60,0.15); }
+
+  .price { font-size: 2.8rem; font-weight: 800; margin: 0; line-height: 1; }
+  .plan-name { color: var(--muted); font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase; margin: 6px 0 20px; }
+  .features { list-style: none; padding: 18px 0 0; margin: 0 0 22px; border-top: 1px solid var(--line); }
+  .features li { display: flex; justify-content: space-between; font-size: 0.92rem; margin-bottom: 10px; color: var(--text); }
+  .features span { color: var(--purple); font-weight: 600; }
+  .features span.red { color: var(--red); }
+
+  .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .pay-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 11px 6px; border-radius: 8px; text-decoration: none;
+    font-weight: 600; font-size: 0.8rem; color: #fff; border: 1px solid transparent;
+    transition: 0.2s; background: rgba(157,0,255,0.12); border-color: rgba(157,0,255,0.4);
+  }
+  .pay-btn:hover { background: var(--purple); }
+  .pay-btn.btc { background: rgba(255,0,60,0.10); border-color: rgba(255,0,60,0.4); }
+  .pay-btn.btc:hover { background: var(--red); }
+
+  .btc-box {
+    max-width: 1200px; width: 100%; background: var(--card);
+    border: 1px solid var(--red); border-radius: 16px; padding: 26px;
+    margin-top: 50px; text-align: center; box-shadow: 0 0 22px rgba(255,0,60,0.15);
+  }
+  .btc-box h3 { margin: 0 0 8px; color: var(--red); letter-spacing: 2px; text-transform: uppercase; font-size: 1rem; }
+  .btc-box p { color: var(--muted); font-size: 0.85rem; margin: 0 0 18px; }
+  .btc-addr {
+    display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;
+    background: rgba(0,0,0,0.4); border: 1px solid rgba(255,0,60,0.3);
+    border-radius: 10px; padding: 14px 18px; word-break: break-all;
+  }
+  .btc-addr code { color: #fff; user-select: all; }
+  .copy-btn { background: var(--red); color: #fff; border: none; border-radius: 6px; padding: 8px 14px; font-weight: 600; font-size: 0.75rem; cursor: pointer; letter-spacing: 1px; }
+  .copy-btn:hover { opacity: 0.85; }
+
+  footer { margin-top: 60px; color: var(--muted); font-size: 0.75rem; letter-spacing: 2px; text-align: center; }
+</style>
+</head>
+<body>
+
+  <h1 class="brand-title">DELIRIUM<span>C2</span> <em>//</em> PLANS</h1>
+  <p class="subtitle">Choose your plan</p>
+
+  <h2 class="section-title">Core Plans</h2>
+  <div class="grid">
+    <div class="card">
+      <h2 class="price">$10</h2>
+      <div class="plan-name">Basic</div>
+      <ul class="features"><li>Concurrents <span>1</span></li><li>Duration <span>60s</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="price">$20</h2>
+      <div class="plan-name">Pro</div>
+      <ul class="features"><li>Concurrents <span>2</span></li><li>Duration <span>100s</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="price">$30</h2>
+      <div class="plan-name">Elite</div>
+      <ul class="features"><li>Concurrents <span>3</span></li><li>Duration <span>120s</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+    <div class="card vip">
+      <h2 class="price">$30</h2>
+      <div class="plan-name">VIP Plan</div>
+      <ul class="features"><li>Concurrents <span>1</span></li><li>Duration <span>60s</span></li><li>VIP <span class="red">TRUE</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Addons & Special</h2>
+  <div class="grid">
+    <div class="card">
+      <h2 class="price">$10</h2>
+      <div class="plan-name">HH Addon</div>
+      <ul class="features"><li>Concurrents <span>1</span></li><li>Duration <span>86400s</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="price">$80</h2>
+      <div class="plan-name">Lifetime</div>
+      <ul class="features"><li>Duration <span>Lifetime</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="price">$40</h2>
+      <div class="plan-name">Reseller Plan</div>
+      <ul class="features"><li>Keep Sales <span>50%</span></li><li>Concurrents <span>4</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="price">$55</h2>
+      <div class="plan-name">Admin Plan</div>
+      <ul class="features"><li>Help Manage Plans</li><li>Concurrents <span>5</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+    <div class="card vip">
+      <h2 class="price">$65</h2>
+      <div class="plan-name">Co-Owner</div>
+      <ul class="features"><li>Full Net Management</li><li>Concurrents <span class="red">Unlimited</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Raw Plans</h2>
+  <div class="grid">
+    <div class="card">
+      <h2 class="price">$70</h2>
+      <div class="plan-name">Raw · 1 Con</div>
+      <ul class="features"><li>Concurrents <span>1</span></li><li>Duration <span>120s</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="price">$140</h2>
+      <div class="plan-name">Raw · 2 Con</div>
+      <ul class="features"><li>Concurrents <span>2</span></li><li>Duration <span>120s</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="price">$210</h2>
+      <div class="plan-name">Raw · 3 Con</div>
+      <ul class="features"><li>Concurrents <span>3</span></li><li>Duration <span>120s</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">API Plans</h2>
+  <div class="grid">
+    <div class="card">
+      <h2 class="price">$25</h2>
+      <div class="plan-name">API · 1 Con</div>
+      <ul class="features"><li>Concurrents <span>1</span></li><li>Duration <span>120s</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="price">$50</h2>
+      <div class="plan-name">API · 2 Con</div>
+      <ul class="features"><li>Concurrents <span>2</span></li><li>Duration <span>120s</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="price">$75</h2>
+      <div class="plan-name">API · 3 Con</div>
+      <ul class="features"><li>Concurrents <span>3</span></li><li>Duration <span>120s</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">VPN</h2>
+  <div class="grid">
+    <div class="card">
+      <h2 class="price">$5</h2>
+      <div class="plan-name">VPN · Monthly</div>
+      <ul class="features"><li>Billing <span>Monthly</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="price">$5</h2>
+      <div class="plan-name">VPN · Monthly (2)</div>
+      <ul class="features"><li>Billing <span>Monthly</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="price">$10</h2>
+      <div class="plan-name">VPN · 2 Months</div>
+      <ul class="features"><li>Billing <span>2 Months</span></li></ul>
+      <div class="pay-grid">
+        <a href="#" class="pay-btn">Cash App</a>
+        <a href="#" class="pay-btn">PayPal</a>
+        <a href="#" class="pay-btn">Venmo</a>
+        <a href="#btc" class="pay-btn btc">BTC</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="btc-box" id="btc">
+    <h3>Pay with Bitcoin</h3>
+    <p>Send the exact amount to the wallet below, then DM us your TXID on Telegram.</p>
+    <div class="btc-addr">
+      <code id="btcAddress">bc1qXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</code>
+      <button class="copy-btn" onclick="copyBTC()">COPY</button>
+    </div>
+  </div>
+
+  <footer>DELIRIUMC2 · All sales final · Contact via Telegram for support</footer>
+
+  <script>
+    function copyBTC() {
+      const addr = document.getElementById('btcAddress').innerText;
+      navigator.clipboard.writeText(addr).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.innerText = 'COPIED ✓';
+        setTimeout(() => btn.innerText = 'COPY', 1800);
+      });
+    }
+  </script>
+
+</body>
+</html>
