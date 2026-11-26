@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DELIRIUMC2 // Advertise</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap');
+  :root {
+    --bg: #050008; --card: #11001c; --sidebar: #0a0012;
+    --purple: #9d00ff; --purple-soft: rgba(157, 0, 255, 0.25);
+    --red: #ff003c; --text: #ffffff; --muted: #9a8fa8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif;
+    margin: 0; display: flex; min-height: 100vh;
+  }
+  /* Sidebar Styles */
+  .sidebar {
+    width: 250px; background-color: var(--sidebar); border-right: 1px solid var(--purple-soft);
+    padding: 30px 20px; display: flex; flex-direction: column; position: fixed; height: 100vh;
+  }
+  .sidebar-logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 40px; text-decoration: none; color: var(--text); }
+  .sidebar-logo span { color: var(--purple); }
+  .sidebar-logo em { font-style: normal; color: var(--red); }
+  .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+  .sidebar-menu li { margin-bottom: 10px; }
+  .sidebar-menu a {
+    color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.9rem;
+    display: block; padding: 12px 15px; border-radius: 8px; transition: 0.2s; border-left: 3px solid transparent;
+  }
+  .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(157, 0, 255, 0.1); color: var(--text); border-left-color: var(--purple); }
+  .dropdown-menu { list-style: none; padding: 0; margin: 5px 0 0 15px; display: none; }
+  .dropdown-menu.active { display: block; }
+  .dropdown-menu a { font-size: 0.85rem; padding: 8px 15px; border-left: 2px solid var(--purple-soft); }
+
+  /* Main Content */
+  .main-content {
+    margin-left: 250px; padding: 50px 20px; flex: 1; display: flex; flex-direction: column; align-items: center;
+    background-image: radial-gradient(circle at 15% 10%, rgba(157, 0, 255, 0.10), transparent 30%), radial-gradient(circle at 85% 90%, rgba(255, 0, 60, 0.10), transparent 30%);
+  }
+  .page-title { font-size: 2rem; font-weight: 800; margin: 0 0 10px; text-align: center; letter-spacing: 3px; }
+  .page-title span { color: var(--purple); }
+  .page-title em { font-style: normal; color: var(--red); }
+  .subtitle { color: var(--muted); letter-spacing: 4px; font-size: 0.8rem; margin: 0 0 50px; text-transform: uppercase; }
+
+  .ad-info-box {
+    background: var(--card); border: 1px solid var(--purple); border-radius: 16px;
+    padding: 30px; width: 100%; max-width: 600px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  .ad-info-box h3 { color: var(--red); margin-top: 0; letter-spacing: 2px; }
+  .ad-info-box p { color: var(--muted); line-height: 1.6; font-size: 0.95rem; margin-bottom: 25px; }
+  .contact-btn {
+    display: inline-block; background: var(--purple); color: #fff; text-decoration: none;
+    padding: 15px 30px; border-radius: 8px; font-weight: 800; letter-spacing: 1px; transition: 0.2s;
+  }
+  .contact-btn:hover { background: var(--red); }
+
+  @media (max-width: 768px) {
+    body { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: relative; padding: 20px; border-right: none; border-bottom: 1px solid var(--purple-soft); }
+    .main-content { margin-left: 0; padding-top: 30px; }
+  }
+</style>
+</head>
+<body>
+
+  <nav class="sidebar">
+    <a href="../" class="sidebar-logo">DELIRIUM<span>C2</span> <em>//</em></a>
+    <ul class="sidebar-menu">
+      <li><a href="../">💰 Pricing Plans</a></li>
+      <li>
+        <a href="#" onclick="toggleDropdown(event)">🛠️ Tools ▾</a>
+        <ul class="dropdown-menu active" id="toolsDropdown">
+          <li><a href="../ping/">IP Pinger</a></li>
+        </ul>
+      </li>
+      <li><a href="./" class="active">📢 Advertise</a></li>
+      <li><a href="#">📞 Support</a></li>
+    </ul>
+  </nav>
+
+  <main class="main-content">
+    <h1 class="page-title">DELIRIUM<span>C2</span> <em>//</em> ADS</h1>
+    <p class="subtitle">Get Your Brand Seen</p>
+
+    <div class="ad-info-box">
+      <h3>Want your ad here?</h3>
+      <p>
+        Our site gets daily traffic from users looking for premium tools. 
+        Place your banner on our homepage popup or in our sidebar to get direct clicks to your website, Discord, or Telegram.
+      </p>
+      
+      <!-- REPLACE THIS LINK WITH YOUR ACTUAL TELEGRAM SUPPORT LINK -->
+      <a href="https://t.me/YOUR_TELEGRAM_USERNAME" target="_blank" class="contact-btn">CONTACT ON TELEGRAM</a>
+      
+      <p style="margin-top: 20px; font-size: 0.8rem; color: #666;">
+        * All ads must be approved. Prices negotiable based on duration.
+      </p>
+    </div>
+  </main>
+
+  <script>
+    function toggleDropdown(event) {
+      event.preventDefault();
+      document.getElementById('toolsDropdown').classList.toggle('active');
+    }
+  </script>
+</body>
+</html>
