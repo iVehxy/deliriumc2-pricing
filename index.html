@@ -55,70 +55,38 @@
   .sidebar-logo span { color: var(--purple); }
   .sidebar-logo em { font-style: normal; color: var(--red); }
 
-  .sidebar-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
+  .sidebar-menu { list-style: none; padding: 0; margin: 0; }
   .sidebar-menu li { margin-bottom: 10px; }
-
   .sidebar-menu a {
-    color: var(--muted);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    display: block;
-    padding: 12px 15px;
-    border-radius: 8px;
-    transition: 0.2s;
+    color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.9rem;
+    display: block; padding: 12px 15px; border-radius: 8px; transition: 0.2s;
     border-left: 3px solid transparent;
   }
-
   .sidebar-menu a:hover, .sidebar-menu a.active {
-    background: rgba(157, 0, 255, 0.1);
-    color: var(--text);
-    border-left-color: var(--purple);
+    background: rgba(157, 0, 255, 0.1); color: var(--text); border-left-color: var(--purple);
   }
-
-  /* Dropdown specific styles */
   .dropdown-menu {
-    list-style: none;
-    padding: 0;
-    margin: 5px 0 0 15px;
-    display: none; /* Hidden by default */
+    list-style: none; padding: 0; margin: 5px 0 0 15px; display: none;
   }
-  .dropdown-menu.active {
-    display: block; /* Show when active */
-  }
-  .dropdown-menu a {
-    font-size: 0.85rem;
-    padding: 8px 15px;
-    border-left: 2px solid var(--purple-soft);
-  }
+  .dropdown-menu.active { display: block; }
+  .dropdown-menu a { font-size: 0.85rem; padding: 8px 15px; border-left: 2px solid var(--purple-soft); }
 
-  /* MAIN CONTENT STYLES */
+  /* MAIN CONTENT */
   .main-content {
-    margin-left: 250px; /* Make room for sidebar */
-    padding: 50px 20px 100px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin-left: 250px; padding: 50px 20px 100px; flex: 1;
+    display: flex; flex-direction: column; align-items: center;
     background-image:
       radial-gradient(circle at 15% 10%, rgba(157, 0, 255, 0.10), transparent 30%),
       radial-gradient(circle at 85% 90%, rgba(255, 0, 60, 0.10), transparent 30%);
   }
 
   .page-title {
-    font-size: clamp(2rem, 6vw, 3rem);
-    font-weight: 800;
-    margin: 0 0 8px;
-    text-align: center;
-    letter-spacing: 3px;
+    font-size: clamp(2rem, 6vw, 3rem); font-weight: 800;
+    margin: 0 0 8px; text-align: center; letter-spacing: 3px;
   }
   .page-title span { color: var(--purple); text-shadow: 0 0 20px rgba(157,0,255,0.6); }
   .page-title em { font-style: normal; color: var(--red); text-shadow: 0 0 20px rgba(255,0,60,0.6); }
+  .subtitle { color: var(--muted); letter-spacing: 4px; font-size: 0.8rem; margin: 0 0 50px; text-transform: uppercase; }
 
   .section-title {
     width: 100%; max-width: 1200px; margin: 40px 0 20px;
@@ -128,8 +96,7 @@
   .section-title.red { color: var(--red); border-color: var(--red-soft); }
 
   .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 22px; max-width: 1200px; width: 100%;
   }
 
@@ -178,7 +145,6 @@
 
   footer { margin-top: 60px; color: var(--muted); font-size: 0.75rem; letter-spacing: 2px; text-align: center; }
 
-  /* Mobile responsiveness */
   @media (max-width: 768px) {
     body { flex-direction: column; }
     .sidebar { width: 100%; height: auto; position: relative; padding: 20px; border-right: none; border-bottom: 1px solid var(--purple-soft); }
@@ -190,20 +156,15 @@
 
   <!-- SIDEBAR NAVIGATION -->
   <nav class="sidebar">
-    <a href="index.html" class="sidebar-logo">DELIRIUM<span>C2</span> <em>//</em></a>
-    
+    <a href="./" class="sidebar-logo">DELIRIUM<span>C2</span> <em>//</em></a>
     <ul class="sidebar-menu">
-      <li><a href="index.html" class="active">💰 Pricing Plans</a></li>
-      
-      <!-- Dropdown Menu -->
+      <li><a href="./" class="active">💰 Pricing Plans</a></li>
       <li>
         <a href="#" onclick="toggleDropdown(event)">🛠️ Tools ▾</a>
         <ul class="dropdown-menu active" id="toolsDropdown">
-          <li><a href="ping.html">IP Pinger</a></li>
-          <!-- You can add more tools here later -->
+          <li><a href="ping/">IP Pinger</a></li>
         </ul>
       </li>
-      
       <li><a href="#">📞 Support</a></li>
     </ul>
   </nav>
@@ -211,7 +172,7 @@
   <!-- MAIN CONTENT -->
   <main class="main-content">
     <h1 class="page-title">DELIRIUM<span>C2</span> <em>//</em> PLANS</h1>
-    <p style="color: var(--muted); letter-spacing: 4px; font-size: 0.8rem; margin: 0 0 50px; text-transform: uppercase;">Choose your plan</p>
+    <p class="subtitle">Choose your plan</p>
 
     <h2 class="section-title">Core Plans</h2>
     <div class="grid">
@@ -261,8 +222,175 @@
       </div>
     </div>
 
-    <!-- (Paste the rest of your plans here: Addons, Raw, API, VPN) -->
-    <!-- I truncated the middle section to save space, but you should copy the same cards from your previous index.html -->
+    <h2 class="section-title">Addons & Special</h2>
+    <div class="grid">
+      <div class="card">
+        <h2 class="price">$10</h2>
+        <div class="plan-name">HH Addon</div>
+        <ul class="features"><li>Concurrents <span>1</span></li><li>Duration <span>86400s</span></li></ul>
+        <div class="pay-grid">
+          <a href="https://cash.app/$vsetls/10" class="pay-btn">Cash App</a>
+          <a href="https://paypal.me/emcinte/10" class="pay-btn">PayPal</a>
+          <a href="https://venmo.com/u/vsetls?txn=pay&amount=10&note=HH" class="pay-btn">Venmo</a>
+          <a href="#btc" class="pay-btn btc">BTC</a>
+        </div>
+      </div>
+      <div class="card">
+        <h2 class="price">$80</h2>
+        <div class="plan-name">Lifetime</div>
+        <ul class="features"><li>Duration <span>Lifetime</span></li></ul>
+        <div class="pay-grid">
+          <a href="https://cash.app/$vsetls/80" class="pay-btn">Cash App</a>
+          <a href="https://paypal.me/emcinte/80" class="pay-btn">PayPal</a>
+          <a href="https://venmo.com/u/vsetls?txn=pay&amount=80&note=Lifetime" class="pay-btn">Venmo</a>
+          <a href="#btc" class="pay-btn btc">BTC</a>
+        </div>
+      </div>
+      <div class="card">
+        <h2 class="price">$40</h2>
+        <div class="plan-name">Reseller Plan</div>
+        <ul class="features"><li>Keep Sales <span>50%</span></li><li>Concurrents <span>4</span></li></ul>
+        <div class="pay-grid">
+          <a href="https://cash.app/$vsetls/40" class="pay-btn">Cash App</a>
+          <a href="https://paypal.me/emcinte/40" class="pay-btn">PayPal</a>
+          <a href="https://venmo.com/u/vsetls?txn=pay&amount=40&note=Reseller" class="pay-btn">Venmo</a>
+          <a href="#btc" class="pay-btn btc">BTC</a>
+        </div>
+      </div>
+      <div class="card">
+        <h2 class="price">$55</h2>
+        <div class="plan-name">Admin Plan</div>
+        <ul class="features"><li>Help Manage Plans</li><li>Concurrents <span>5</span></li></ul>
+        <div class="pay-grid">
+          <a href="https://cash.app/$vsetls/55" class="pay-btn">Cash App</a>
+          <a href="https://paypal.me/emcinte/55" class="pay-btn">PayPal</a>
+          <a href="https://venmo.com/u/vsetls?txn=pay&amount=55&note=Admin" class="pay-btn">Venmo</a>
+          <a href="#btc" class="pay-btn btc">BTC</a>
+        </div>
+      </div>
+      <div class="card vip">
+        <h2 class="price">$65</h2>
+        <div class="plan-name">Co-Owner</div>
+        <ul class="features"><li>Full Net Management</li><li>Concurrents <span class="red">Unlimited</span></li></ul>
+        <div class="pay-grid">
+          <a href="https://cash.app/$vsetls/65" class="pay-btn">Cash App</a>
+          <a href="https://paypal.me/emcinte/65" class="pay-btn">PayPal</a>
+          <a href="https://venmo.com/u/vsetls?txn=pay&amount=65&note=CoOwner" class="pay-btn">Venmo</a>
+          <a href="#btc" class="pay-btn btc">BTC</a>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Raw Plans</h2>
+    <div class="grid">
+      <div class="card">
+        <h2 class="price">$70</h2>
+        <div class="plan-name">Raw · 1 Con</div>
+        <ul class="features"><li>Concurrents <span>1</span></li><li>Duration <span>120s</span></li></ul>
+        <div class="pay-grid">
+          <a href="https://cash.app/$vsetls/70" class="pay-btn">Cash App</a>
+          <a href="https://paypal.me/emcinte/70" class="pay-btn">PayPal</a>
+          <a href="https://venmo.com/u/vsetls?txn=pay&amount=70&note=Raw1" class="pay-btn">Venmo</a>
+          <a href="#btc" class="pay-btn btc">BTC</a>
+        </div>
+      </div>
+      <div class="card">
+        <h2 class="price">$140</h2>
+        <div class="plan-name">Raw · 2 Con</div>
+        <ul class="features"><li>Concurrents <span>2</span></li><li>Duration <span>120s</span></li></ul>
+        <div class="pay-grid">
+          <a href="https://cash.app/$vsetls/140" class="pay-btn">Cash App</a>
+          <a href="https://paypal.me/emcinte/140" class="pay-btn">PayPal</a>
+          <a href="https://venmo.com/u/vsetls?txn=pay&amount=140&note=Raw2" class="pay-btn">Venmo</a>
+          <a href="#btc" class="pay-btn btc">BTC</a>
+        </div>
+      </div>
+      <div class="card">
+        <h2 class="price">$210</h2>
+        <div class="plan-name">Raw · 3 Con</div>
+        <ul class="features"><li>Concurrents <span>3</span></li><li>Duration <span>120s</span></li></ul>
+        <div class="pay-grid">
+          <a href="https://cash.app/$vsetls/210" class="pay-btn">Cash App</a>
+          <a href="https://paypal.me/emcinte/210" class="pay-btn">PayPal</a>
+          <a href="https://venmo.com/u/vsetls?txn=pay&amount=210&note=Raw3" class="pay-btn">Venmo</a>
+          <a href="#btc" class="pay-btn btc">BTC</a>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">API Plans</h2>
+    <div class="grid">
+      <div class="card">
+        <h2 class="price">$25</h2>
+        <div class="plan-name">API · 1 Con</div>
+        <ul class="features"><li>Concurrents <span>1</span></li><li>Duration <span>120s</span></li></ul>
+        <div class="pay-grid">
+          <a href="https://cash.app/$vsetls/25" class="pay-btn">Cash App</a>
+          <a href="https://paypal.me/emcinte/25" class="pay-btn">PayPal</a>
+          <a href="https://venmo.com/u/vsetls?txn=pay&amount=25&note=API1" class="pay-btn">Venmo</a>
+          <a href="#btc" class="pay-btn btc">BTC</a>
+        </div>
+      </div>
+      <div class="card">
+        <h2 class="price">$50</h2>
+        <div class="plan-name">API · 2 Con</div>
+        <ul class="features"><li>Concurrents <span>2</span></li><li>Duration <span>120s</span></li></ul>
+        <div class="pay-grid">
+          <a href="https://cash.app/$vsetls/50" class="pay-btn">Cash App</a>
+          <a href="https://paypal.me/emcinte/50" class="pay-btn">PayPal</a>
+          <a href="https://venmo.com/u/vsetls?txn=pay&amount=50&note=API2" class="pay-btn">Venmo</a>
+          <a href="#btc" class="pay-btn btc">BTC</a>
+        </div>
+      </div>
+      <div class="card">
+        <h2 class="price">$75</h2>
+        <div class="plan-name">API · 3 Con</div>
+        <ul class="features"><li>Concurrents <span>3</span></li><li>Duration <span>120s</span></li></ul>
+        <div class="pay-grid">
+          <a href="https://cash.app/$vsetls/75" class="pay-btn">Cash App</a>
+          <a href="https://paypal.me/emcinte/75" class="pay-btn">PayPal</a>
+          <a href="https://venmo.com/u/vsetls?txn=pay&amount=75&note=API3" class="pay-btn">Venmo</a>
+          <a href="#btc" class="pay-btn btc">BTC</a>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">VPN</h2>
+    <div class="grid">
+      <div class="card">
+        <h2 class="price">$5</h2>
+        <div class="plan-name">VPN · Monthly</div>
+        <ul class="features"><li>Billing <span>Monthly</span></li></ul>
+        <div class="pay-grid">
+          <a href="https://cash.app/$vsetls/5" class="pay-btn">Cash App</a>
+          <a href="https://paypal.me/emcinte/5" class="pay-btn">PayPal</a>
+          <a href="https://venmo.com/u/vsetls?txn=pay&amount=5&note=VPN1" class="pay-btn">Venmo</a>
+          <a href="#btc" class="pay-btn btc">BTC</a>
+        </div>
+      </div>
+      <div class="card">
+        <h2 class="price">$5</h2>
+        <div class="plan-name">VPN · Monthly (2)</div>
+        <ul class="features"><li>Billing <span>Monthly</span></li></ul>
+        <div class="pay-grid">
+          <a href="https://cash.app/$vsetls/5" class="pay-btn">Cash App</a>
+          <a href="https://paypal.me/emcinte/5" class="pay-btn">PayPal</a>
+          <a href="https://venmo.com/u/vsetls?txn=pay&amount=5&note=VPN2" class="pay-btn">Venmo</a>
+          <a href="#btc" class="pay-btn btc">BTC</a>
+        </div>
+      </div>
+      <div class="card">
+        <h2 class="price">$10</h2>
+        <div class="plan-name">VPN · 2 Months</div>
+        <ul class="features"><li>Billing <span>2 Months</span></li></ul>
+        <div class="pay-grid">
+          <a href="https://cash.app/$vsetls/10" class="pay-btn">Cash App</a>
+          <a href="https://paypal.me/emcinte/10" class="pay-btn">PayPal</a>
+          <a href="https://venmo.com/u/vsetls?txn=pay&amount=10&note=VPN3" class="pay-btn">Venmo</a>
+          <a href="#btc" class="pay-btn btc">BTC</a>
+        </div>
+      </div>
+    </div>
 
     <div class="btc-box" id="btc">
       <h3>Pay with Bitcoin</h3>
@@ -279,8 +407,7 @@
   <script>
     function toggleDropdown(event) {
       event.preventDefault();
-      const dropdown = document.getElementById('toolsDropdown');
-      dropdown.classList.toggle('active');
+      document.getElementById('toolsDropdown').classList.toggle('active');
     }
 
     function copyBTC() {
@@ -292,6 +419,5 @@
       });
     }
   </script>
-
 </body>
 </html>
