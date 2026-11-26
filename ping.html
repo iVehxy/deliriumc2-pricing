@@ -164,7 +164,7 @@
       document.getElementById('toolsDropdown').classList.toggle('active');
     }
 
-    function startPing() {
+    async function startPing() {
       const input = document.getElementById('ipInput').value.trim();
       const term = document.getElementById('terminal');
       
@@ -179,13 +179,44 @@
       // Swap buttons
       document.getElementById('startBtn').style.display = 'none';
       document.getElementById('stopBtn').style.display = 'block';
-      term.innerHTML = `<span class="info">> Starting continuous ping to ${input}...</span>\n`;
+      
+      term.innerHTML = `<span class="info">> Fetching initial details for ${input}...</span>\n`;
 
-      // Run immediately
-      doPing(input);
+      // 1. FETCH INFO FIRST
+      const startTime = performance.now();
+      try {
+        const response = await fetch(`https://ipapi.co/${input}/json/`);
+        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+        const data = await response.json();
+        
+        if (data.error) {
+          term.innerHTML += `<span class="error">> Host not found. (${data.reason})</span>\n`;
+          stopPing(); 
+          return;
+        }
 
-      // Then run every 3 seconds
-      pingInterval = setInterval(() => doPing(input), 3000);
+        const endTime = performance.now();
+        const pingTime = Math.round(endTime - startTime);
+
+        // Print the IP Details FIRST
+        term.innerHTML += `<span class="success">> Reply from ${data.ip}: time=${pingTime}ms</span>\n`;
+        term.innerHTML += `----------------------------------------\n`;
+        term.innerHTML += `<span class="info">> IP Details:</span>\n`;
+        term.innerHTML += `  ISP:         ${data.org || 'Unknown'}\n`;
+        term.innerHTML += `  Location:    ${data.city || 'Unknown'}, ${data.region || 'Unknown'}, ${data.country_name || 'Unknown'}\n`;
+        term.innerHTML += `  Timezone:    ${data.timezone || 'Unknown'}\n`;
+        term.innerHTML += `  Coordinates: ${data.latitude}, ${data.longitude}\n`;
+        term.innerHTML += `----------------------------------------\n`;
+        term.innerHTML += `<span class="info">> Starting continuous ping loop (every 3s)...</span>\n`;
+        term.scrollTop = term.scrollHeight;
+
+        // 2. THEN START THE PING LOOP
+        pingInterval = setInterval(() => doContinuousPing(input), 3000);
+
+      } catch (error) {
+        term.innerHTML += `<span class="error">> Request failed: ${error.message}</span>\n`;
+        stopPing();
+      }
     }
 
     function stopPing() {
@@ -196,41 +227,28 @@
       
       const term = document.getElementById('terminal');
       term.innerHTML += `\n<span class="error">> Ping stopped by user.</span>\n`;
+      term.scrollTop = term.scrollHeight;
     }
 
-    async function doPing(input) {
+    async function doContinuousPing(input) {
       const term = document.getElementById('terminal');
       const startTime = performance.now();
 
       try {
         const response = await fetch(`https://ipapi.co/${input}/json/`);
         if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-        
         const data = await response.json();
         const endTime = performance.now();
         const pingTime = Math.round(endTime - startTime);
 
         if (data.error) {
           term.innerHTML += `<span class="error">> Host not found. (${data.reason})</span>\n`;
-          stopPing(); // Stop if the IP is invalid
+          stopPing();
           return;
         }
 
-        // Print each ping result
+        // Only print the short reply line during the loop
         term.innerHTML += `<span class="success">> Reply from ${data.ip}: time=${pingTime}ms</span>\n`;
-        
-        // Only print the full details once, on the first ping, to avoid spam
-        if (term.innerHTML.split('IP Details').length === 1) {
-            term.innerHTML += `----------------------------------------\n`;
-            term.innerHTML += `<span class="info">> IP Details:</span>\n`;
-            term.innerHTML += `  ISP:         ${data.org || 'Unknown'}\n`;
-            term.innerHTML += `  Location:    ${data.city || 'Unknown'}, ${data.region || 'Unknown'}, ${data.country_name || 'Unknown'}\n`;
-            term.innerHTML += `  Timezone:    ${data.timezone || 'Unknown'}\n`;
-            term.innerHTML += `  Coordinates: ${data.latitude}, ${data.longitude}\n`;
-            term.innerHTML += `----------------------------------------\n`;
-        }
-
-        // Auto-scroll to bottom
         term.scrollTop = term.scrollHeight;
 
       } catch (error) {
