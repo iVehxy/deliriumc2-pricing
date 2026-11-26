@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DELIRIUMC2 // IP Lookup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap');
+
+  :root {
+    --bg: #050008;
+    --card: #11001c;
+    --purple: #9d00ff;
+    --red: #ff003c;
+    --text: #ffffff;
+    --muted: #9a8fa8;
+  }
+
+  body {
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(157, 0, 255, 0.10), transparent 30%),
+      radial-gradient(circle at 85% 90%, rgba(255, 0, 60, 0.10), transparent 30%);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 50px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .brand-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 0 8px;
+    text-align: center;
+    letter-spacing: 3px;
+  }
+  .brand-title span { color: var(--purple); text-shadow: 0 0 20px rgba(157,0,255,0.6); }
+  .brand-title em { font-style: normal; color: var(--red); text-shadow: 0 0 20px rgba(255,0,60,0.6); }
+  
+  .nav-link {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+    border: 1px solid var(--muted);
+    padding: 5px 15px;
+    border-radius: 20px;
+    transition: 0.2s;
+  }
+  .nav-link:hover { color: var(--text); border-color: var(--text); }
+
+  .ping-box {
+    background: var(--card);
+    border: 1px solid var(--purple);
+    border-radius: 16px;
+    padding: 30px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+
+  .input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  input[type="text"] {
+    flex: 1;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--purple);
+    border-radius: 8px;
+    padding: 12px 15px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    outline: none;
+  }
+  input[type="text"]:focus { border-color: var(--red); }
+
+  button {
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: 0.2s;
+  }
+  button:hover { background: var(--red); }
+
+  .terminal {
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 15px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    min-height: 200px;
+    color: #ccc;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .terminal .success { color: #00ff66; }
+  .terminal .error { color: var(--red); }
+  .terminal .info { color: var(--purple); }
+</style>
+</head>
+<body>
+
+  <h1 class="brand-title">DELIRIUM<span>C2</span> <em>//</em> LOOKUP</h1>
+  <a href="index.html" class="nav-link">← BACK TO PRICING</a>
+
+  <div class="ping-box">
+    <div class="input-group">
+      <input type="text" id="ipInput" placeholder="Enter IP or Domain (e.g. 8.8.8.8)">
+      <button onclick="pingIP()">PING</button>
+    </div>
+    
+    <div class="terminal" id="terminal">
+      > Ready. Enter an IP address or domain and click PING.
+    </div>
+  </div>
+
+  <script>
+    async function pingIP() {
+      const input = document.getElementById('ipInput').value.trim();
+      const term = document.getElementById('terminal');
+      
+      if (!input) {
+        term.innerHTML = `<span class="error">> Error: Please enter a valid IP or domain.</span>`;
+        return;
+      }
+
+      term.innerHTML = `<span class="info">> Pinging ${input}...</span>\n`;
+      
+      const startTime = performance.now();
+
+      try {
+        // We use a free public API to get the IP info
+        const response = await fetch(`http://ip-api.com/json/${input}`);
+        const data = await response.json();
+        const endTime = performance.now();
+        const pingTime = Math.round(endTime - startTime);
+
+        if (data.status === 'fail') {
+          term.innerHTML += `<span class="error">> Host not found or invalid IP.</span>`;
+          return;
+        }
+
+        term.innerHTML += `<span class="success">> Reply from ${data.query}: time=${pingTime}ms</span>\n`;
+        term.innerHTML += `----------------------------------------\n`;
+        term.innerHTML += `<span class="info">> IP Details:</span>\n`;
+        term.innerHTML += `  ISP:       ${data.isp}\n`;
+        term.innerHTML += `  Location:  ${data.city}, ${data.regionName}, ${data.country}\n`;
+        term.innerHTML += `  Timezone:  ${data.timezone}\n`;
+        term.innerHTML += `  Coordinates: ${data.lat}, ${data.lon}\n`;
+        term.innerHTML += `  Org:       ${data.org}\n`;
+
+      } catch (error) {
+        term.innerHTML += `<span class="error">> Request failed. The API might be down or blocked.</span>`;
+      }
+    }
+  </script>
+
+</body>
+</html>
