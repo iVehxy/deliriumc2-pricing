@@ -31,24 +31,15 @@
 
   /* SIDEBAR STYLES */
   .sidebar {
-    width: 250px;
-    background-color: var(--sidebar);
+    width: 250px; background-color: var(--sidebar);
     border-right: 1px solid var(--purple-soft);
-    padding: 30px 20px;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    height: 100vh;
-    overflow-y: auto;
+    padding: 30px 20px; display: flex; flex-direction: column;
+    position: fixed; height: 100vh; overflow-y: auto;
   }
 
   .sidebar-logo {
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: 2px;
-    margin-bottom: 40px;
-    text-decoration: none;
-    color: var(--text);
+    font-size: 1.5rem; font-weight: 800; letter-spacing: 2px;
+    margin-bottom: 40px; text-decoration: none; color: var(--text);
   }
   .sidebar-logo span { color: var(--purple); }
   .sidebar-logo em { font-style: normal; color: var(--red); }
@@ -63,9 +54,7 @@
   .sidebar-menu a:hover, .sidebar-menu a.active {
     background: rgba(157, 0, 255, 0.1); color: var(--text); border-left-color: var(--purple);
   }
-  .dropdown-menu {
-    list-style: none; padding: 0; margin: 5px 0 0 15px; display: none;
-  }
+  .dropdown-menu { list-style: none; padding: 0; margin: 5px 0 0 15px; display: none; }
   .dropdown-menu.active { display: block; }
   .dropdown-menu a { font-size: 0.85rem; padding: 8px 15px; border-left: 2px solid var(--purple-soft); }
 
@@ -125,13 +114,14 @@
 
   <!-- SIDEBAR -->
   <nav class="sidebar">
-    <a href="index.html" class="sidebar-logo">DELIRIUM<span>C2</span> <em>//</em></a>
+    <!-- Notice the ../ links to go back to the root folder -->
+    <a href="../" class="sidebar-logo">DELIRIUM<span>C2</span> <em>//</em></a>
     <ul class="sidebar-menu">
-      <li><a href="index.html">💰 Pricing Plans</a></li>
+      <li><a href="../">💰 Pricing Plans</a></li>
       <li>
         <a href="#" onclick="toggleDropdown(event)" class="active">🛠️ Tools ▾</a>
         <ul class="dropdown-menu active" id="toolsDropdown">
-          <li><a href="ping.html" class="active">IP Pinger</a></li>
+          <li><a href="./" class="active">IP Pinger</a></li>
         </ul>
       </li>
       <li><a href="#">📞 Support</a></li>
@@ -176,13 +166,10 @@
       if (isPinging) return;
       isPinging = true;
 
-      // Swap buttons
       document.getElementById('startBtn').style.display = 'none';
       document.getElementById('stopBtn').style.display = 'block';
-      
       term.innerHTML = `<span class="info">> Fetching initial details for ${input}...</span>\n`;
 
-      // 1. FETCH INFO FIRST
       const startTime = performance.now();
       try {
         const response = await fetch(`https://ipapi.co/${input}/json/`);
@@ -198,7 +185,6 @@
         const endTime = performance.now();
         const pingTime = Math.round(endTime - startTime);
 
-        // Print the IP Details FIRST
         term.innerHTML += `<span class="success">> Reply from ${data.ip}: time=${pingTime}ms</span>\n`;
         term.innerHTML += `----------------------------------------\n`;
         term.innerHTML += `<span class="info">> IP Details:</span>\n`;
@@ -210,7 +196,6 @@
         term.innerHTML += `<span class="info">> Starting continuous ping loop (every 3s)...</span>\n`;
         term.scrollTop = term.scrollHeight;
 
-        // 2. THEN START THE PING LOOP
         pingInterval = setInterval(() => doContinuousPing(input), 3000);
 
       } catch (error) {
@@ -247,7 +232,6 @@
           return;
         }
 
-        // Only print the short reply line during the loop
         term.innerHTML += `<span class="success">> Reply from ${data.ip}: time=${pingTime}ms</span>\n`;
         term.scrollTop = term.scrollHeight;
 
@@ -257,6 +241,5 @@
       }
     }
   </script>
-
 </body>
 </html>
