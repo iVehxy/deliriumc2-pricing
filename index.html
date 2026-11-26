@@ -156,7 +156,8 @@
   }
 
   .ad-banner {
-    display: block; width: 100%; border-radius: 8px; margin-bottom: 15px;
+    display: block; width: 100%; max-height: 120px; object-fit: cover;
+    border-radius: 8px; margin-bottom: 15px;
     transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.1);
   }
   .ad-banner:hover { transform: scale(1.02); border-color: var(--red); }
@@ -182,16 +183,16 @@
     <div class="ad-modal-content">
       <div class="ad-modal-title">ADVERTISEMENTS</div>
       
-      <!-- Replace the href with your affiliate link and src with your banner image -->
+      <!-- ELEVATE NETWORK GIF -->
       <a href="https://elevate-network.xyz/login" target="_blank">
-        <!-- REPLACE THE IMAGE LINK BELOW WITH YOUR ELEVATE BANNER -->
-        <img src="https://via.placeholder.com/400x150/11001c/9d00ff?text=ELEVATE+NETWORK" alt="Elevate Network" class="ad-banner">
+        <!-- REPLACE THIS SRC WITH YOUR ELEVATE GIF LINK -->
+        <img src="YOUR_ELEVATE_GIF_LINK.gif" alt="Elevate Network" class="ad-banner">
       </a>
       
-      <!-- You can add more banners here -->
-      <a href="#" target="_blank">
-        <!-- REPLACE THE IMAGE LINK BELOW WITH YOUR SECOND BANNER -->
-        <img src="https://via.placeholder.com/400x100/11001c/ff003c?text=YOUR+AD+HERE" alt="Ad 2" class="ad-banner">
+      <!-- YOUR SECOND GIF BANNER -->
+      <a href="https://your-ad-link.com" target="_blank">
+        <!-- REPLACE THIS SRC WITH YOUR SECOND GIF LINK -->
+        <img src="YOUR_SECOND_GIF_LINK.gif" alt="Ad 2" class="ad-banner">
       </a>
 
       <button class="close-ad-btn" onclick="closeAd()">Close</button>
