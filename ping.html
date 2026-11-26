@@ -29,7 +29,7 @@
     min-height: 100vh;
   }
 
-  /* SIDEBAR STYLES (Same as index) */
+  /* SIDEBAR STYLES */
   .sidebar {
     width: 250px;
     background-color: var(--sidebar);
@@ -91,23 +91,24 @@
     border-radius: 16px; padding: 30px; width: 100%; max-width: 600px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   }
-  .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+  .input-group { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
   input[type="text"] {
-    flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--purple);
+    flex: 1; min-width: 200px; background: rgba(0,0,0,0.4); border: 1px solid var(--purple);
     border-radius: 8px; padding: 12px 15px; color: var(--text);
     font-family: 'JetBrains Mono', monospace; outline: none;
   }
   input[type="text"]:focus { border-color: var(--red); }
-  button {
-    background: var(--purple); color: #fff; border: none; border-radius: 8px;
-    padding: 12px 20px; font-weight: 600; cursor: pointer;
-    font-family: 'Inter', sans-serif; transition: 0.2s;
-  }
-  button:hover { background: var(--red); }
+  
+  .btn-start { background: #00ff66; color: #000; border: none; border-radius: 8px; padding: 12px 20px; font-weight: 800; cursor: pointer; transition: 0.2s; }
+  .btn-start:hover { background: #00cc52; }
+  .btn-stop { background: var(--red); color: #fff; border: none; border-radius: 8px; padding: 12px 20px; font-weight: 800; cursor: pointer; transition: 0.2s; display: none; }
+  .btn-stop:hover { background: #cc0030; }
+
   .terminal {
     background: #000; border: 1px solid #333; border-radius: 8px;
     padding: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
-    min-height: 200px; color: #ccc; white-space: pre-wrap; word-break: break-all;
+    min-height: 250px; color: #ccc; white-space: pre-wrap; word-break: break-all;
+    max-height: 400px; overflow-y: auto;
   }
   .terminal .success { color: #00ff66; }
   .terminal .error { color: var(--red); }
@@ -144,23 +145,26 @@
     <div class="ping-box">
       <div class="input-group">
         <input type="text" id="ipInput" placeholder="Enter IP or Domain (e.g. 8.8.8.8)">
-        <button onclick="pingIP()">PING</button>
+        <button id="startBtn" class="btn-start" onclick="startPing()">START</button>
+        <button id="stopBtn" class="btn-stop" onclick="stopPing()">STOP</button>
       </div>
       
       <div class="terminal" id="terminal">
-        > Ready. Enter an IP address or domain and click PING.
+        > Ready. Enter an IP address or domain and click START.
       </div>
     </div>
   </main>
 
   <script>
+    let pingInterval = null;
+    let isPinging = false;
+
     function toggleDropdown(event) {
       event.preventDefault();
-      const dropdown = document.getElementById('toolsDropdown');
-      dropdown.classList.toggle('active');
+      document.getElementById('toolsDropdown').classList.toggle('active');
     }
 
-    async function pingIP() {
+    function startPing() {
       const input = document.getElementById('ipInput').value.trim();
       const term = document.getElementById('terminal');
       
@@ -169,7 +173,33 @@
         return;
       }
 
-      term.innerHTML = `<span class="info">> Pinging ${input}...</span>\n`;
+      if (isPinging) return;
+      isPinging = true;
+
+      // Swap buttons
+      document.getElementById('startBtn').style.display = 'none';
+      document.getElementById('stopBtn').style.display = 'block';
+      term.innerHTML = `<span class="info">> Starting continuous ping to ${input}...</span>\n`;
+
+      // Run immediately
+      doPing(input);
+
+      // Then run every 3 seconds
+      pingInterval = setInterval(() => doPing(input), 3000);
+    }
+
+    function stopPing() {
+      clearInterval(pingInterval);
+      isPinging = false;
+      document.getElementById('startBtn').style.display = 'block';
+      document.getElementById('stopBtn').style.display = 'none';
+      
+      const term = document.getElementById('terminal');
+      term.innerHTML += `\n<span class="error">> Ping stopped by user.</span>\n`;
+    }
+
+    async function doPing(input) {
+      const term = document.getElementById('terminal');
       const startTime = performance.now();
 
       try {
@@ -181,20 +211,31 @@
         const pingTime = Math.round(endTime - startTime);
 
         if (data.error) {
-          term.innerHTML += `<span class="error">> Host not found or invalid IP. (${data.reason})</span>`;
+          term.innerHTML += `<span class="error">> Host not found. (${data.reason})</span>\n`;
+          stopPing(); // Stop if the IP is invalid
           return;
         }
 
+        // Print each ping result
         term.innerHTML += `<span class="success">> Reply from ${data.ip}: time=${pingTime}ms</span>\n`;
-        term.innerHTML += `----------------------------------------\n`;
-        term.innerHTML += `<span class="info">> IP Details:</span>\n`;
-        term.innerHTML += `  ISP:         ${data.org || 'Unknown'}\n`;
-        term.innerHTML += `  Location:    ${data.city || 'Unknown'}, ${data.region || 'Unknown'}, ${data.country_name || 'Unknown'}\n`;
-        term.innerHTML += `  Timezone:    ${data.timezone || 'Unknown'}\n`;
-        term.innerHTML += `  Coordinates: ${data.latitude}, ${data.longitude}\n`;
+        
+        // Only print the full details once, on the first ping, to avoid spam
+        if (term.innerHTML.split('IP Details').length === 1) {
+            term.innerHTML += `----------------------------------------\n`;
+            term.innerHTML += `<span class="info">> IP Details:</span>\n`;
+            term.innerHTML += `  ISP:         ${data.org || 'Unknown'}\n`;
+            term.innerHTML += `  Location:    ${data.city || 'Unknown'}, ${data.region || 'Unknown'}, ${data.country_name || 'Unknown'}\n`;
+            term.innerHTML += `  Timezone:    ${data.timezone || 'Unknown'}\n`;
+            term.innerHTML += `  Coordinates: ${data.latitude}, ${data.longitude}\n`;
+            term.innerHTML += `----------------------------------------\n`;
+        }
+
+        // Auto-scroll to bottom
+        term.scrollTop = term.scrollHeight;
 
       } catch (error) {
-        term.innerHTML += `<span class="error">> Request failed: ${error.message}</span>`;
+        term.innerHTML += `<span class="error">> Request failed: ${error.message}</span>\n`;
+        stopPing();
       }
     }
   </script>
