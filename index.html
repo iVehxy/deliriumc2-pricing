@@ -279,6 +279,7 @@
           <li><a href="ping/">IP Pinger</a></li>
           <li><a href="gradient.html">🎨 Gradient Tool</a></li>
           <li><a href="geo.html">🌍 IP Geolocation</a></li>
+          <li><a href="json.html">🧩 JSON Repair</a></li> <!-- ADDED JSON TOOL LINK HERE -->
         </ul>
       </li>
       <li><a href="advertise/">📢 Advertise</a></li>
@@ -520,14 +521,11 @@
     <footer>DELIRIUMC2 · All sales final · Contact via Telegram for support</footer>
   </main>
 
-  <!-- FLOATING MUSIC PLAYER START -->
   <div class="floating-player">
     <audio id="bgMusic" loop>
       <source src="music.mp3" type="audio/mpeg">
     </audio>
-    
     <button id="musicBtn" onclick="toggleMusic()">▶</button>
-    
     <div class="player-info">
       <div class="song-title">Thick One - Skilla Baby</div>
       <div class="progress-container">
@@ -535,10 +533,8 @@
       </div>
     </div>
   </div>
-  <!-- FLOATING MUSIC PLAYER END -->
 
   <script>
-    // Show ad when page loads
     window.onload = function() {
       setTimeout(() => {
         document.getElementById('adModal').classList.add('active');
@@ -580,7 +576,6 @@
       }
     }
 
-    // Update progress bar as song plays
     audio.addEventListener('timeupdate', () => {
       if (audio.duration) {
         const percent = (audio.currentTime / audio.duration) * 100;
