@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DELIRIUMC2 | UI Template Generator</title>
+<title>DELIRIUMC2 | UI Generator</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap');
   :root { --bg: #050008; --card: #11001c; --sidebar: #0a0012; --purple: #9d00ff; --purple-soft: rgba(157, 0, 255, 0.25); --red: #ff003c; --text: #ffffff; --muted: #9a8fa8; --line: rgba(255, 255, 255, 0.06); }
   * { box-sizing: border-box; }
   body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; display: flex; min-height: 100vh; }
-  
   .sidebar { width: 250px; background-color: var(--sidebar); border-right: 1px solid var(--purple-soft); padding: 30px 20px; display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto; }
   .sidebar-logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 40px; text-decoration: none; color: var(--text); }
   .sidebar-logo span { color: var(--purple); } .sidebar-logo em { font-style: normal; color: var(--red); }
@@ -18,29 +17,22 @@
   .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(157, 0, 255, 0.1); color: var(--text); border-left-color: var(--purple); }
   .dropdown-menu { list-style: none; padding: 0; margin: 5px 0 0 15px; display: none; } .dropdown-menu.active { display: block; }
   .dropdown-menu a { font-size: 0.85rem; padding: 8px 15px; border-left: 2px solid var(--purple-soft); }
-
   .main-content { margin-left: 250px; padding: 50px 20px 100px; flex: 1; display: flex; flex-direction: column; align-items: center; background-image: radial-gradient(circle at 15% 10%, rgba(157, 0, 255, 0.10), transparent 30%), radial-gradient(circle at 85% 90%, rgba(255, 0, 60, 0.10), transparent 30%); }
   .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; text-align: center;} .page-title span { color: var(--purple); text-shadow: 0 0 20px rgba(157,0,255,0.6); }
-
   .tool-container { width: 100%; max-width: 900px; background: var(--card); border: 1px solid var(--purple-soft); border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-
   .form-group { margin-bottom: 15px; }
   .form-label { display: block; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600; }
-  input[type="text"], textarea, select { width: 100%; padding: 12px; background: #000; border: 1px solid var(--line); border-radius: 8px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; outline: none; transition: 0.2s; }
-  input[type="text"]:focus, textarea:focus, select:focus { border-color: var(--purple); }
-  
+  input[type="text"], select { width: 100%; padding: 12px; background: #000; border: 1px solid var(--line); border-radius: 8px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; outline: none; transition: 0.2s; }
+  input[type="text"]:focus, select:focus { border-color: var(--purple); }
   .btn { background: var(--purple); color: #fff; border: none; border-radius: 8px; padding: 14px 24px; font-weight: 600; cursor: pointer; transition: 0.2s; letter-spacing: 1px; text-transform: uppercase; width: 100%; margin-top: 10px; }
   .btn:hover { background: var(--red); }
-
   .output-area { width: 100%; min-height: 350px; background: #000; border: 1px solid var(--purple-soft); border-radius: 8px; padding: 20px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; white-space: pre; overflow-x: auto; margin-top: 20px; line-height: 1.4; }
   .copy-btn { background: transparent; color: var(--purple); border: 1px solid var(--purple); padding: 8px 15px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; font-weight: 600; margin-top: 10px; width: 100%;}
   .copy-btn:hover { background: var(--purple); color: #fff; }
-
   @media (max-width: 768px) { body { flex-direction: column; } .sidebar { width: 100%; height: auto; position: relative; padding: 20px; border-right: none; border-bottom: 1px solid var(--purple-soft); } .main-content { margin-left: 0; padding-top: 30px; } }
 </style>
 </head>
 <body>
-
   <nav class="sidebar">
     <a href="./" class="sidebar-logo">DELIRIUM<span>C2</span> <em>//</em></a>
     <ul class="sidebar-menu">
@@ -48,161 +40,39 @@
       <li>
         <a href="#" onclick="toggleDropdown(event)">🛠️ Tools ▾</a>
         <ul class="dropdown-menu active" id="toolsDropdown">
-          <li><a href="ping/">IP Pinger</a></li>
-          <li><a href="gradient.html">🎨 Gradient Tool</a></li>
-          <li><a href="geo.html">🌍 IP Geolocation</a></li>
-          <li><a href="json.html">🧩 JSON Repair</a></li>
-          <li><a href="devtools.html">⚙️ Dev Tools</a></li>
-          <li><a href="more-tools.html">🚀 More Tools</a></li>
-          <li><a href="osint.html">🕵️ OSINT Tools</a></li>
-          <li><a href="text-tools.html">📝 Text Tools</a></li>
-          <li><a href="wheel.html">🎡 Giveaway Wheel</a></li>
-          <li><a href="ascii-maker.html">🖥️ ASCII Maker</a></li>
-          <li><a href="layout-maker.html">🗂️ Layout Builder</a></li>
-          <li><a href="ui-generator.html" class="active">💻 UI Generator</a></li> <!-- NEW LINK -->
+          <li><a href="ping/">IP Pinger</a></li><li><a href="gradient.html">🎨 Gradient Tool</a></li><li><a href="geo.html">🌍 IP Geolocation</a></li><li><a href="json.html">🧩 JSON Repair</a></li><li><a href="devtools.html">⚙️ Dev Tools</a></li><li><a href="more-tools.html">🚀 More Tools</a></li><li><a href="osint.html">🕵️ OSINT Tools</a></li><li><a href="text-tools.html">📝 Text Tools</a></li><li><a href="wheel.html">🎡 Giveaway Wheel</a></li><li><a href="ascii-maker.html">🖥️ ASCII Maker</a></li><li><a href="layout-maker.html">🗂️ Layout Builder</a></li><li><a href="ui-generator.html" class="active">💻 UI Generator</a></li>
         </ul>
       </li>
-      <li><a href="advertise/">📢 Advertise</a></li>
-      <li><a href="https://t.me/@vsetls" target="_blank">📞 Support</a></li>
+      <li><a href="advertise/">📢 Advertise</a></li><li><a href="https://t.me/@vsetls" target="_blank">📞 Support</a></li>
     </ul>
   </nav>
-
   <main class="main-content">
     <h1 class="page-title">UI <span>GENERATOR</span></h1>
-    
     <div class="tool-container">
-      <p style="color: var(--muted); margin-top: 0; text-align: center; margin-bottom: 20px;">Select a layout, enter your brand details, and get the full HTML/CSS code.</p>
-
-      <div class="form-group">
-        <label class="form-label">Select Layout Style</label>
-        <select id="uiStyle">
-          <option value="sidebar">Classic Sidebar (Dark Mode)</option>
-          <option value="topnav">Modern Top Nav (Clean)</option>
-          <option value="terminal">Cyber Terminal (Retro)</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Brand Name</label>
-        <input type="text" id="uiBrand" placeholder="e.g. DELIRIUM" value="DELIRIUM">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Menu Items (Comma separated)</label>
-        <input type="text" id="uiMenu" placeholder="e.g. Dashboard, Users, Settings, Logout" value="Dashboard, Users, Settings, Logout">
-      </div>
-
+      <p style="color: var(--muted); margin-top: 0; text-align: center; margin-bottom: 20px;">Select a layout and generate HTML/CSS code.</p>
+      <div class="form-group"><label class="form-label">Select Layout Style</label><select id="uiStyle"><option value="sidebar">Classic Sidebar</option><option value="topnav">Modern Top Nav</option><option value="terminal">Cyber Terminal</option></select></div>
+      <div class="form-group"><label class="form-label">Brand Name</label><input type="text" id="uiBrand" value="DELIRIUM"></div>
+      <div class="form-group"><label class="form-label">Menu Items (Comma separated)</label><input type="text" id="uiMenu" value="Dashboard, Users, Settings, Logout"></div>
       <button class="btn" onclick="generateUI()">Generate Code</button>
-
       <div class="output-area" id="uiOutput">Your HTML code will appear here...</div>
       <button class="copy-btn" onclick="copyUI()">Copy Code</button>
     </div>
   </main>
-
   <script>
     function toggleDropdown(event) { event.preventDefault(); document.getElementById('toolsDropdown').classList.toggle('active'); }
-
     function generateUI() {
-      const style = document.getElementById('uiStyle').value;
-      const brand = document.getElementById('uiBrand').value || "BRAND";
-      const menuItems = document.getElementById('uiMenu').value.split(',').map(i => i.trim());
-      
-      const output = document.getElementById('uiOutput');
-      let htmlCode = "";
-
+      const style = document.getElementById('uiStyle').value; const brand = document.getElementById('uiBrand').value || "BRAND"; const menuItems = document.getElementById('uiMenu').value.split(',').map(i => i.trim()); const output = document.getElementById('uiOutput'); let htmlCode = "";
+      const baseCSS = `body { margin: 0; font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; } .logo { font-size: 1.5rem; font-weight: bold; color: #9d00ff; }`;
       if (style === 'sidebar') {
-        htmlCode = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>${brand} Dashboard</title>
-<style>
-  body { margin: 0; font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; display: flex; }
-  .sidebar { width: 250px; background: #111; height: 100vh; padding: 20px; border-right: 1px solid #333; }
-  .logo { font-size: 1.5rem; font-weight: bold; color: #9d00ff; margin-bottom: 30px; }
-  .nav-item { padding: 12px; border-radius: 8px; margin-bottom: 5px; cursor: pointer; color: #888; transition: 0.2s; }
-  .nav-item:hover, .nav-item.active { background: rgba(157, 0, 255, 0.2); color: #fff; }
-  .main { flex: 1; padding: 40px; }
-  h1 { margin-top: 0; }
-</style>
-</head>
-<body>
-  <div class="sidebar">
-    <div class="logo">${brand}</div>
-    ${menuItems.map((item, i) => `<div class="nav-item ${i === 0 ? 'active' : ''}">${item}</div>`).join('')}
-  </div>
-  <div class="main">
-    <h1>Welcome to ${brand}</h1>
-    <p>This is the ${menuItems[0]} page.</p>
-  </div>
-</body>
-</html>`;
+        htmlCode = `<!DOCTYPE html><html><head><title>${brand}</title><style>${baseCSS} body { display: flex; } .sidebar { width: 250px; background: #111; height: 100vh; padding: 20px; border-right: 1px solid #333; } .nav-item { padding: 12px; border-radius: 8px; margin-bottom: 5px; cursor: pointer; color: #888; } .nav-item:hover, .nav-item.active { background: rgba(157, 0, 255, 0.2); color: #fff; } .main { flex: 1; padding: 40px; }</style></head><body><div class="sidebar"><div class="logo">${brand}</div>${menuItems.map((item, i) => `<div class="nav-item ${i === 0 ? 'active' : ''}">${item}</div>`).join('')}</div><div class="main"><h1>Welcome to ${brand}</h1></div></body></html>`;
       } else if (style === 'topnav') {
-        htmlCode = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>${brand} Dashboard</title>
-<style>
-  body { margin: 0; font-family: 'Inter', sans-serif; background: #050505; color: #fff; }
-  .navbar { background: #111; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
-  .logo { font-size: 1.5rem; font-weight: bold; color: #ff003c; }
-  .nav-links { display: flex; gap: 20px; }
-  .nav-links a { color: #888; text-decoration: none; transition: 0.2s; }
-  .nav-links a:hover { color: #fff; }
-  .content { padding: 50px; }
-</style>
-</head>
-<body>
-  <div class="navbar">
-    <div class="logo">${brand}</div>
-    <div class="nav-links">
-      ${menuItems.map(item => `<a href="#">${item}</a>`).join('')}
-    </div>
-  </div>
-  <div class="content">
-    <h1>${brand} Dashboard</h1>
-    <p>Welcome to the modern layout.</p>
-  </div>
-</body>
-</html>`;
-      } else if (style === 'terminal') {
-        htmlCode = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>${brand} Terminal</title>
-<style>
-  body { margin: 0; font-family: 'Courier New', monospace; background: #000; color: #0f0; padding: 20px; }
-  .header { border: 1px solid #0f0; padding: 10px; display: inline-block; margin-bottom: 20px; }
-  .menu-item { display: block; margin-bottom: 10px; cursor: pointer; }
-  .menu-item:hover { background: #0f0; color: #000; }
-  .prompt { color: #0f0; }
-</style>
-</head>
-<body>
-  <div class="header">[ SYSTEM: ${brand} ]</div>
-  <br>
-  ${menuItems.map(item => `<span class="menu-item">> ${item}</span>`).join('')}
-  <br>
-  <div class="prompt">root@${brand.toLowerCase()} ~ # <span style="background:#0f0; color:#000;">_</span></div>
-</body>
-</html>`;
+        htmlCode = `<!DOCTYPE html><html><head><title>${brand}</title><style>${baseCSS} .navbar { background: #111; padding: 15px 30px; display: flex; justify-content: space-between; border-bottom: 1px solid #333; } .nav-links { display: flex; gap: 20px; } .nav-links a { color: #888; text-decoration: none; } .nav-links a:hover { color: #fff; } .content { padding: 50px; }</style></head><body><div class="navbar"><div class="logo">${brand}</div><div class="nav-links">${menuItems.map(item => `<a href="#">${item}</a>`).join('')}</div></div><div class="content"><h1>${brand} Dashboard</h1></div></body></html>`;
+      } else {
+        htmlCode = `<!DOCTYPE html><html><head><title>${brand}</title><style>body { background: #000; color: #0f0; font-family: monospace; padding: 20px; } .header { border: 1px solid #0f0; padding: 10px; display: inline-block; margin-bottom: 20px; } .menu-item { display: block; margin-bottom: 10px; }</style></head><body><div class="header">[ SYSTEM: ${brand} ]</div><br>${menuItems.map(item => `<span class="menu-item">> ${item}</span>`).join('')}<br><div class="prompt">root@${brand.toLowerCase()} ~ # <span style="background:#0f0; color:#000;">_</span></div></body></html>`;
       }
-
       output.innerText = htmlCode;
     }
-
-    function copyUI() {
-      const output = document.getElementById('uiOutput').innerText;
-      if (output === "Your HTML code will appear here...") return;
-      
-      navigator.clipboard.writeText(output).then(() => {
-        const btn = document.querySelector('.copy-btn');
-        btn.innerText = 'COPIED ✓';
-        setTimeout(() => btn.innerText = 'Copy Code', 1800);
-      });
-    }
+    function copyUI() { const output = document.getElementById('uiOutput').innerText; if (output === "Your HTML code will appear here...") return; navigator.clipboard.writeText(output).then(() => { const btn = document.querySelector('.copy-btn'); btn.innerText = 'COPIED ✓'; setTimeout(() => btn.innerText = 'Copy Code', 1800); }); }
   </script>
 </body>
 </html>
