@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DELIRIUMC2 | Gradient Tool</title>
+<!-- Library to convert ANSI codes to HTML colors for the preview -->
+<script src="https://cdn.jsdelivr.net/npm/ansi_up@5.2.1/ansi_up.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap');
+
+  :root {
+    --bg: #050008;
+    --card: #11001c;
+    --sidebar: #0a0012;
+    --purple: #9d00ff;
+    --purple-soft: rgba(157, 0, 255, 0.25);
+    --red: #ff003c;
+    --text: #ffffff;
+    --muted: #9a8fa8;
+    --line: rgba(255, 255, 255, 0.06);
+  }
+
+  * { box-sizing: border-box; }
+  body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; display: flex; min-height: 100vh; }
+
+  /* SIDEBAR STYLES */
+  .sidebar {
+    width: 250px; background-color: var(--sidebar);
+    border-right: 1px solid var(--purple-soft);
+    padding: 30px 20px; display: flex; flex-direction: column;
+    position: fixed; height: 100vh; overflow-y: auto;
+  }
+  .sidebar-logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 40px; text-decoration: none; color: var(--text); }
+  .sidebar-logo span { color: var(--purple); }
+  .sidebar-logo em { font-style: normal; color: var(--red); }
+  .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+  .sidebar-menu li { margin-bottom: 10px; }
+  .sidebar-menu a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.9rem; display: block; padding: 12px 15px; border-radius: 8px; transition: 0.2s; border-left: 3px solid transparent; }
+  .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(157, 0, 255, 0.1); color: var(--text); border-left-color: var(--purple); }
+  .dropdown-menu { list-style: none; padding: 0; margin: 5px 0 0 15px; display: none; }
+  .dropdown-menu.active { display: block; }
+  .dropdown-menu a { font-size: 0.85rem; padding: 8px 15px; border-left: 2px solid var(--purple-soft); }
+
+  /* MAIN CONTENT */
+  .main-content {
+    margin-left: 250px; padding: 50px 20px 100px; flex: 1;
+    display: flex; flex-direction: column; align-items: center;
+    background-image: radial-gradient(circle at 15% 10%, rgba(157, 0, 255, 0.10), transparent 30%), radial-gradient(circle at 85% 90%, rgba(255, 0, 60, 0.10), transparent 30%);
+  }
+
+  .tool-container {
+    width: 100%; max-width: 900px; background: var(--card);
+    border: 1px solid var(--purple-soft); border-radius: 16px;
+    padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+
+  .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; text-align: center;}
+  .page-title span { color: var(--purple); text-shadow: 0 0 20px rgba(157,0,255,0.6); }
+
+  .input-group { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .color-input { flex: 1; min-width: 120px; padding: 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--purple-soft); border-radius: 8px; color: #fff; font-family: 'JetBrains Mono', monospace; }
+  
+  .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; margin-bottom: 20px; }
+  .file-input-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
+  .btn { background: var(--purple); color: #fff; border: none; border-radius: 8px; padding: 14px 24px; font-weight: 600; cursor: pointer; transition: 0.2s; width: 100%; letter-spacing: 1px; text-transform: uppercase; }
+  .btn:hover { background: var(--red); }
+  
+  .output-box {
+    width: 100%; height: 200px; background: #000;
+    border: 1px solid var(--line); border-radius: 8px;
+    color: #fff; font-family: 'JetBrains Mono', monospace;
+    padding: 15px; white-space: pre; overflow: auto; margin-top: 10px;
+    font-size: 0.85rem;
+  }
+
+  .preview-box {
+    width: 100%; height: 250px; background: #000;
+    border: 1px solid var(--purple-soft); border-radius: 8px;
+    padding: 15px; white-space: pre; overflow: auto; margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+    box-shadow: inset 0 0 20px rgba(157,0,255,0.1);
+  }
+  
+  .error-msg { color: var(--red); font-size: 0.9rem; margin-top: 10px; display: none; text-align: center; }
+  .label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; display: block; }
+
+  @media (max-width: 768px) {
+    body { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: relative; padding: 20px; border-right: none; border-bottom: 1px solid var(--purple-soft); }
+    .main-content { margin-left: 0; padding-top: 30px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <a href="./" class="sidebar-logo">DELIRIUM<span>C2</span> <em>//</em></a>
+    <ul class="sidebar-menu">
+      <li><a href="./">💰 Pricing Plans</a></li>
+      <li>
+        <a href="#" onclick="toggleDropdown(event)">🛠️ Tools ▾</a>
+        <ul class="dropdown-menu active" id="toolsDropdown">
+          <li><a href="ping/">IP Pinger</a></li>
+          <li><a href="gradient.html" class="active">🎨 Gradient Tool</a></li>
+        </ul>
+      </li>
+      <li><a href="advertise/">📢 Advertise</a></li>
+      <li><a href="https://t.me/@vsetls" target="_blank">📞 Support</a></li>
+    </ul>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <h1 class="page-title">ASCII <span>Gradient</span> Tool</h1>
+    
+    <div class="tool-container">
+      <p style="color: var(--muted); margin-top: 0; text-align: center;">Upload your ASCII art `.txt` file and define your gradient colors. Enter colors as R,G,B (e.g., 157,0,255).</p>
+      
+      <div class="input-group">
+        <input type="text" id="color1" class="color-input" value="157,0,255" placeholder="Start Color (R,G,B)">
+        <input type="text" id="color2" class="color-input" value="255,0,60" placeholder="Middle Color (Optional)">
+        <input type="text" id="color3" class="color-input" value="255,255,255" placeholder="End Color (R,G,B)">
+      </div>
+
+      <div class="file-input-wrapper">
+        <button class="btn">1. Upload TXT File</button>
+        <input type="file" id="fileInput" accept=".txt" />
+      </div>
+
+      <button class="btn" onclick="generateGradient()" style="background: var(--red); margin-bottom: 20px;">2. Generate Gradient</button>
+      
+      <div id="error" class="error-msg"></div>
+
+      <span class="label">Live Color Preview (On Site)</span>
+      <div class="preview-box" id="preview">Color preview will appear here after generating...</div>
+
+      <span class="label">Raw Text for Discord (.txt format)</span>
+      <div class="output-box" id="output">Raw ANSI code will appear here...</div>
+
+      <button class="btn" onclick="downloadOutput()" style="margin-top: 20px; background: rgba(255,255,255,0.1); border: 1px solid var(--purple);">Download Result as .txt</button>
+    </div>
+  </main>
+
+  <script>
+    // Dropdown UI logic
+    function toggleDropdown(event) {
+      event.preventDefault();
+      document.getElementById('toolsDropdown').classList.toggle('active');
+    }
+
+    let loadedFileText = "";
+
+    // Handle File Upload
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        loadedFileText = e.target.result;
+        document.getElementById('error').style.display = 'none';
+        document.getElementById('output').innerText = "File loaded! Click 'Generate Gradient'.";
+        document.getElementById('preview').innerText = "File loaded! Click 'Generate Gradient'.";
+      };
+      reader.readAsText(file);
+    });
+
+    // Parse "R,G,B" string into an array of numbers
+    function parseColor(colorStr) {
+      if (!colorStr) return null;
+      const parts = colorStr.split(',').map(n => parseInt(n.trim()));
+      if (parts.length !== 3 || parts.some(isNaN)) return null;
+      return parts;
+    }
+
+    // Linear interpolation between two colors
+    function lerpColor(c1, c2, t) {
+      return [
+        Math.round(c1[0] + (c2[0] - c1[0]) * t),
+        Math.round(c1[1] + (c2[1] - c1[1]) * t),
+        Math.round(c1[2] + (c2[2] - c1[2]) * t)
+      ];
+    }
+
+    // Core Gradient Generation Logic
+    function generateGradient() {
+      const err = document.getElementById('error');
+      if (!loadedFileText) {
+        err.innerText = "Please upload a .txt file first.";
+        err.style.display = 'block';
+        return;
+      }
+
+      const c1 = parseColor(document.getElementById('color1').value);
+      const c2 = parseColor(document.getElementById('color2').value);
+      const c3 = parseColor(document.getElementById('color3').value);
+
+      if (!c1) {
+        err.innerText = "Start color is invalid. Use R,G,B format (e.g., 157,0,255).";
+        err.style.display = 'block';
+        return;
+      }
+
+      const hasMid = c2 !== null;
+      const hasEnd = c3 !== null;
+      let finalOutput = "";
+      
+      // Count non-space characters to distribute the gradient smoothly
+      const totalChars = loadedFileText.replace(/ /g, '').length;
+      let currentCharIndex = 0;
+
+      for (let i = 0; i < loadedFileText.length; i++) {
+        const char = loadedFileText[i];
+        
+        // Keep spaces and newlines unchanged so the ASCII art isn't broken
+        if (char === ' ' || char === '\n' || char === '\r') {
+          finalOutput += char;
+          continue;
+        }
+
+        // Calculate how far along the text we are (0.0 to 1.0)
+        let progress = currentCharIndex / (totalChars - 1 || 1); 
+        let currentColor;
+
+        // Blend colors based on how many were provided
+        if (hasMid && hasEnd) {
+          if (progress <= 0.5) {
+            currentColor = lerpColor(c1, c2, progress * 2);
+          } else {
+            currentColor = lerpColor(c2, c3, (progress - 0.5) * 2);
+          }
+        } else if (hasEnd) {
+          currentColor = lerpColor(c1, c3, progress);
+        } else {
+          currentColor = c1;
+        }
+
+        // Create the ANSI escape code for this specific character
+        const ansiCode = `\x1b[38;2;${currentColor[0]};${currentColor[1]};${currentColor[2]}m`;
+        const resetCode = `\x1b[0m`;
+        
+        finalOutput += ansiCode + char + resetCode;
+        currentCharIndex++;
+      }
+
+      // 1. Output Raw Text for downloading
+      document.getElementById('output').innerText = finalOutput;
+      
+      // 2. Output Live Preview using ansi_up library
+      const ansi_up = new AnsiUp();
+      document.getElementById('preview').innerHTML = ansi_up.ansi_to_html(finalOutput);
+      
+      err.style.display = 'none';
+      window.lastGeneratedText = finalOutput;
+    }
+
+    // Download the generated file
+    function downloadOutput() {
+      if (!window.lastGeneratedText) return;
+      const blob = new Blob([window.lastGeneratedText], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'delirium_gradient.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
