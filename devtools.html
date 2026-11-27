@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DELIRIUMC2 | Dev Tools</title>
+<!-- Library for MD5, SHA-1, SHA-256 Hashing -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap');
+
+  :root {
+    --bg: #050008; --card: #11001c; --sidebar: #0a0012; --purple: #9d00ff;
+    --purple-soft: rgba(157, 0, 255, 0.25); --red: #ff003c; --text: #ffffff;
+    --muted: #9a8fa8; --line: rgba(255, 255, 255, 0.06);
+  }
+
+  * { box-sizing: border-box; }
+  body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar { width: 250px; background-color: var(--sidebar); border-right: 1px solid var(--purple-soft); padding: 30px 20px; display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto; }
+  .sidebar-logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 40px; text-decoration: none; color: var(--text); }
+  .sidebar-logo span { color: var(--purple); }
+  .sidebar-logo em { font-style: normal; color: var(--red); }
+  .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+  .sidebar-menu li { margin-bottom: 10px; }
+  .sidebar-menu a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.9rem; display: block; padding: 12px 15px; border-radius: 8px; transition: 0.2s; border-left: 3px solid transparent; }
+  .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(157, 0, 255, 0.1); color: var(--text); border-left-color: var(--purple); }
+  .dropdown-menu { list-style: none; padding: 0; margin: 5px 0 0 15px; display: none; }
+  .dropdown-menu.active { display: block; }
+  .dropdown-menu a { font-size: 0.85rem; padding: 8px 15px; border-left: 2px solid var(--purple-soft); }
+
+  /* MAIN CONTENT */
+  .main-content { margin-left: 250px; padding: 50px 20px 100px; flex: 1; display: flex; flex-direction: column; align-items: center; background-image: radial-gradient(circle at 15% 10%, rgba(157, 0, 255, 0.10), transparent 30%), radial-gradient(circle at 85% 90%, rgba(255, 0, 60, 0.10), transparent 30%); }
+  .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; text-align: center;}
+  .page-title span { color: var(--purple); text-shadow: 0 0 20px rgba(157,0,255,0.6); }
+
+  .tool-container { width: 100%; max-width: 800px; background: var(--card); border: 1px solid var(--purple-soft); border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+  /* TABS */
+  .tabs { display: flex; gap: 10px; border-bottom: 1px solid var(--line); margin-bottom: 20px; flex-wrap: wrap; }
+  .tab-btn { background: transparent; color: var(--muted); border: none; padding: 10px 15px; font-weight: 600; cursor: pointer; font-size: 0.9rem; border-bottom: 3px solid transparent; transition: 0.2s; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* INPUTS */
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600; }
+  textarea, input[type="text"] { width: 100%; padding: 15px; background: #000; border: 1px solid var(--line); border-radius: 8px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; outline: none; transition: 0.2s; }
+  textarea:focus, input[type="text"]:focus { border-color: var(--purple); }
+  
+  .btn { background: var(--purple); color: #fff; border: none; border-radius: 8px; padding: 14px 24px; font-weight: 600; cursor: pointer; transition: 0.2s; letter-spacing: 1px; text-transform: uppercase; width: 100%; }
+  .btn:hover { background: var(--red); }
+
+  .result-box { background: rgba(157,0,255,0.05); border: 1px solid var(--purple-soft); border-radius: 8px; padding: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; word-break: break-all; margin-top: 15px; color: var(--text); }
+  .copy-btn { background: transparent; color: var(--purple); border: 1px solid var(--purple); padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; float: right; margin-top: 10px; transition: 0.2s; font-weight: 600; }
+  .copy-btn:hover { background: var(--purple); color: #fff; }
+
+  @media (max-width: 768px) {
+    body { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: relative; padding: 20px; border-right: none; border-bottom: 1px solid var(--purple-soft); }
+    .main-content { margin-left: 0; padding-top: 30px; }
+  }
+</style>
+</head>
+<body>
+
+  <nav class="sidebar">
+    <a href="./" class="sidebar-logo">DELIRIUM<span>C2</span> <em>//</em></a>
+    <ul class="sidebar-menu">
+      <li><a href="./">💰 Pricing Plans</a></li>
+      <li>
+        <a href="#" onclick="toggleDropdown(event)">🛠️ Tools ▾</a>
+        <ul class="dropdown-menu active" id="toolsDropdown">
+          <li><a href="ping/">IP Pinger</a></li>
+          <li><a href="gradient.html">🎨 Gradient Tool</a></li>
+          <li><a href="geo.html">🌍 IP Geolocation</a></li>
+          <li><a href="json.html">🧩 JSON Repair</a></li>
+          <li><a href="devtools.html" class="active">⚙️ Dev Tools</a></li> <!-- NEW LINK -->
+        </ul>
+      </li>
+      <li><a href="advertise/">📢 Advertise</a></li>
+      <li><a href="https://t.me/@vsetls" target="_blank">📞 Support</a></li>
+    </ul>
+  </nav>
+
+  <main class="main-content">
+    <h1 class="page-title">DEV <span>TOOLS</span></h1>
+    
+    <div class="tool-container">
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'base64')">Base64</button>
+        <button class="tab-btn" onclick="openTab(event, 'hash')">Hash Generator</button>
+        <button class="tab-btn" onclick="openTab(event, 'url')">URL Encoder</button>
+      </div>
+
+      <!-- TAB 1: BASE64 -->
+      <div id="base64" class="tab-content active">
+        <div class="form-group">
+          <label class="form-label">Input Text</label>
+          <textarea id="b64Input" rows="4" placeholder="Type or paste text here..." oninput="encodeBase64()"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Encoded Base64</label>
+          <textarea id="b64Output" rows="4" readonly placeholder="Encoded result will appear here..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Decode Base64</label>
+          <textarea id="b64DecodeInput" rows="3" placeholder="Paste Base64 here to decode..." oninput="decodeBase64()"></textarea>
+          <div class="result-box" id="b64DecodeOutput">Decoded text will appear here...</div>
+        </div>
+      </div>
+
+      <!-- TAB 2: HASH GENERATOR -->
+      <div id="hash" class="tab-content">
+        <div class="form-group">
+          <label class="form-label">Input Text</label>
+          <textarea id="hashInput" rows="3" placeholder="Type text to hash..." oninput="generateHash()"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">MD5</label>
+          <div class="result-box" id="hash-md5">...</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">SHA-1</label>
+          <div class="result-box" id="hash-sha1">...</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">SHA-256</label>
+          <div class="result-box" id="hash-sha256">...</div>
+        </div>
+      </div>
+
+      <!-- TAB 3: URL ENCODER -->
+      <div id="url" class="tab-content">
+        <div class="form-group">
+          <label class="form-label">Raw String</label>
+          <textarea id="urlInput" rows="3" placeholder="e.g. hello world & test=123" oninput="encodeURL()"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Encoded URL</label>
+          <textarea id="urlOutput" rows="3" readonly placeholder="Encoded URL will appear here..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Decode URL</label>
+          <textarea id="urlDecodeInput" rows="3" placeholder="Paste encoded URL here..." oninput="decodeURL()"></textarea>
+          <div class="result-box" id="urlDecodeOutput">Decoded URL will appear here...</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    function toggleDropdown(event) {
+      event.preventDefault();
+      document.getElementById('toolsDropdown').classList.toggle('active');
+    }
+
+    // TAB LOGIC
+    function openTab(evt, tabName) {
+      const tabContents = document.getElementsByClassName("tab-content");
+      for (let i = 0; i < tabContents.length; i++) { tabContents[i].classList.remove("active"); }
+      
+      const tabBtns = document.getElementsByClassName("tab-btn");
+      for (let i = 0; i < tabBtns.length; i++) { tabBtns[i].classList.remove("active"); }
+      
+      document.getElementById(tabName).classList.add("active");
+      evt.currentTarget.classList.add("active");
+    }
+
+    // BASE64 LOGIC
+    function encodeBase64() {
+      const input = document.getElementById('b64Input').value;
+      try {
+        document.getElementById('b64Output').value = btoa(input);
+      } catch (e) {
+        document.getElementById('b64Output').value = "Error: Invalid characters for Base64 encoding.";
+      }
+    }
+
+    function decodeBase64() {
+      const input = document.getElementById('b64DecodeInput').value;
+      const output = document.getElementById('b64DecodeOutput');
+      if (!input) { output.innerText = "Decoded text will appear here..."; return; }
+      try {
+        output.innerText = atob(input);
+      } catch (e) {
+        output.innerText = "Error: Invalid Base64 string.";
+      }
+    }
+
+    // HASH LOGIC
+    function generateHash() {
+      const input = document.getElementById('hashInput').value;
+      if (!input) {
+        document.getElementById('hash-md5').innerText = "...";
+        document.getElementById('hash-sha1').innerText = "...";
+        document.getElementById('hash-sha256').innerText = "...";
+        return;
+      }
+      document.getElementById('hash-md5').innerText = CryptoJS.MD5(input).toString();
+      document.getElementById('hash-sha1').innerText = CryptoJS.SHA1(input).toString();
+      document.getElementById('hash-sha256').innerText = CryptoJS.SHA256(input).toString();
+    }
+
+    // URL ENCODER LOGIC
+    function encodeURL() {
+      const input = document.getElementById('urlInput').value;
+      document.getElementById('urlOutput').value = encodeURIComponent(input);
+    }
+
+    function decodeURL() {
+      const input = document.getElementById('urlDecodeInput').value;
+      const output = document.getElementById('urlDecodeOutput');
+      if (!input) { output.innerText = "Decoded URL will appear here..."; return; }
+      try {
+        output.innerText = decodeURIComponent(input);
+      } catch (e) {
+        output.innerText = "Error: Invalid URL encoded string.";
+      }
+    }
+  </script>
+</body>
+</html>
