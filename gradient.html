@@ -185,28 +185,32 @@
 
       let finalOutput = "";
       
-      // Split the text into lines to find the middle X position of every line
       const lines = loadedFileText.split('\n');
+      
+      // NEW: Find the longest line to determine the global middle
+      let maxLength = 0;
+      for (let i = 0; i < lines.length; i++) {
+          if (lines[i].length > maxLength) {
+              maxLength = lines[i].length;
+          }
+      }
+      // The straight vertical split line based on the longest row
+      const globalMiddle = Math.floor(maxLength / 2);
 
       for (let l = 0; l < lines.length; l++) {
         const line = lines[l];
-        // Find how long this specific line is
-        const lineLength = line.length;
-        // Calculate the exact middle character index for this line
-        const middleIndex = Math.floor(lineLength / 2);
 
-        for (let i = 0; i < lineLength; i++) {
+        for (let i = 0; i < line.length; i++) {
           const char = line[i];
           
-          // Keep spaces unchanged so we don't break the ASCII art
           if (char === ' ' || char === '\r') {
             finalOutput += char;
             continue;
           }
 
-          // If the character is in the left half, use c1, else use c2
+          // Use the global middle for every line to keep the split straight
           let currentColor;
-          if (i < middleIndex) {
+          if (i < globalMiddle) {
             currentColor = c1;
           } else {
             currentColor = c2;
@@ -218,7 +222,6 @@
           finalOutput += ansiCode + char + resetCode;
         }
         
-        // Add the newline back unless it's the last line
         if (l < lines.length - 1) {
           finalOutput += '\n';
         }
