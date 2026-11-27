@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DELIRIUMC2 | Half/Half Color Tool</title>
+<title>DELIRIUMC2 | Custom Split Color Tool</title>
 <!-- Library to convert ANSI codes to HTML colors for the preview -->
 <script src="https://cdn.jsdelivr.net/npm/ansi_up@5.2.1/ansi_up.min.js"></script>
 <style>
@@ -109,14 +109,16 @@
   </nav>
 
   <main class="main-content">
-    <h1 class="page-title">HALF & HALF <span>COLOR TOOL</span></h1>
+    <h1 class="page-title">CUSTOM SPLIT <span>COLOR TOOL</span></h1>
     
     <div class="tool-container">
-      <p style="color: var(--muted); margin-top: 0; text-align: center;">Upload your ASCII art `.txt` file. Enter colors as R,G,B. The Left Half gets Color 1, the Right Half gets Color 2.</p>
+      <p style="color: var(--muted); margin-top: 0; text-align: center;">Upload your ASCII art. Set the left/right colors. Use the "Split" box to move the cut line left or right.</p>
       
       <div class="input-group">
         <input type="text" id="color1" class="color-input" value="157,0,255" placeholder="Left Color (R,G,B)">
         <input type="text" id="color2" class="color-input" value="220,240,255" placeholder="Right Color (R,G,B)">
+        <!-- NEW SPLIT INPUT -->
+        <input type="number" id="splitPos" class="color-input" value="30" placeholder="Split Position (e.g., 30)" title="Change this number to move the split line!">
       </div>
 
       <div class="file-input-wrapper">
@@ -176,6 +178,8 @@
 
       const c1 = parseColor(document.getElementById('color1').value);
       const c2 = parseColor(document.getElementById('color2').value);
+      // Get the custom split position
+      const splitPos = parseInt(document.getElementById('splitPos').value) || 0;
 
       if (!c1 || !c2) {
         err.innerText = "Both colors must be valid R,G,B format (e.g., 157,0,255).";
@@ -184,18 +188,7 @@
       }
 
       let finalOutput = "";
-      
       const lines = loadedFileText.split('\n');
-      
-      // NEW: Find the longest line to determine the global middle
-      let maxLength = 0;
-      for (let i = 0; i < lines.length; i++) {
-          if (lines[i].length > maxLength) {
-              maxLength = lines[i].length;
-          }
-      }
-      // The straight vertical split line based on the longest row
-      const globalMiddle = Math.floor(maxLength / 2);
 
       for (let l = 0; l < lines.length; l++) {
         const line = lines[l];
@@ -208,9 +201,9 @@
             continue;
           }
 
-          // Use the global middle for every line to keep the split straight
+          // If the character index is LESS than the split number, use Color 1. Otherwise Color 2.
           let currentColor;
-          if (i < globalMiddle) {
+          if (i < splitPos) {
             currentColor = c1;
           } else {
             currentColor = c2;
@@ -242,7 +235,7 @@
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'half_half_art.txt';
+      a.download = 'split_art.txt';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
