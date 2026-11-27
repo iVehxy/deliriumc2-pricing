@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DELIRIUMC2 | Gradient Tool</title>
+<title>DELIRIUMC2 | Half/Half Color Tool</title>
 <!-- Library to convert ANSI codes to HTML colors for the preview -->
 <script src="https://cdn.jsdelivr.net/npm/ansi_up@5.2.1/ansi_up.min.js"></script>
 <style>
@@ -24,7 +24,6 @@
   * { box-sizing: border-box; }
   body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; display: flex; min-height: 100vh; }
 
-  /* SIDEBAR STYLES */
   .sidebar {
     width: 250px; background-color: var(--sidebar);
     border-right: 1px solid var(--purple-soft);
@@ -42,7 +41,6 @@
   .dropdown-menu.active { display: block; }
   .dropdown-menu a { font-size: 0.85rem; padding: 8px 15px; border-left: 2px solid var(--purple-soft); }
 
-  /* MAIN CONTENT */
   .main-content {
     margin-left: 250px; padding: 50px 20px 100px; flex: 1;
     display: flex; flex-direction: column; align-items: center;
@@ -94,7 +92,6 @@
 </head>
 <body>
 
-  <!-- SIDEBAR -->
   <nav class="sidebar">
     <a href="./" class="sidebar-logo">DELIRIUM<span>C2</span> <em>//</em></a>
     <ul class="sidebar-menu">
@@ -111,17 +108,15 @@
     </ul>
   </nav>
 
-  <!-- MAIN CONTENT -->
   <main class="main-content">
-    <h1 class="page-title">ASCII <span>Gradient</span> Tool</h1>
+    <h1 class="page-title">HALF & HALF <span>COLOR TOOL</span></h1>
     
     <div class="tool-container">
-      <p style="color: var(--muted); margin-top: 0; text-align: center;">Upload your ASCII art `.txt` file and define your gradient colors. Enter colors as R,G,B (e.g., 157,0,255).</p>
+      <p style="color: var(--muted); margin-top: 0; text-align: center;">Upload your ASCII art `.txt` file. Enter colors as R,G,B. The Left Half gets Color 1, the Right Half gets Color 2.</p>
       
       <div class="input-group">
-        <input type="text" id="color1" class="color-input" value="157,0,255" placeholder="Start Color (R,G,B)">
-        <input type="text" id="color2" class="color-input" value="255,0,60" placeholder="Middle Color (Optional)">
-        <input type="text" id="color3" class="color-input" value="255,255,255" placeholder="End Color (R,G,B)">
+        <input type="text" id="color1" class="color-input" value="157,0,255" placeholder="Left Color (R,G,B)">
+        <input type="text" id="color2" class="color-input" value="220,240,255" placeholder="Right Color (R,G,B)">
       </div>
 
       <div class="file-input-wrapper">
@@ -129,7 +124,7 @@
         <input type="file" id="fileInput" accept=".txt" />
       </div>
 
-      <button class="btn" onclick="generateGradient()" style="background: var(--red); margin-bottom: 20px;">2. Generate Gradient</button>
+      <button class="btn" onclick="generateGradient()" style="background: var(--red); margin-bottom: 20px;">2. Apply Colors</button>
       
       <div id="error" class="error-msg"></div>
 
@@ -144,7 +139,6 @@
   </main>
 
   <script>
-    // Dropdown UI logic
     function toggleDropdown(event) {
       event.preventDefault();
       document.getElementById('toolsDropdown').classList.toggle('active');
@@ -152,7 +146,6 @@
 
     let loadedFileText = "";
 
-    // Handle File Upload
     document.getElementById('fileInput').addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -160,13 +153,12 @@
       reader.onload = function(e) {
         loadedFileText = e.target.result;
         document.getElementById('error').style.display = 'none';
-        document.getElementById('output').innerText = "File loaded! Click 'Generate Gradient'.";
-        document.getElementById('preview').innerText = "File loaded! Click 'Generate Gradient'.";
+        document.getElementById('output').innerText = "File loaded! Click 'Apply Colors'.";
+        document.getElementById('preview').innerText = "File loaded! Click 'Apply Colors'.";
       };
       reader.readAsText(file);
     });
 
-    // Parse "R,G,B" string into an array of numbers
     function parseColor(colorStr) {
       if (!colorStr) return null;
       const parts = colorStr.split(',').map(n => parseInt(n.trim()));
@@ -174,16 +166,6 @@
       return parts;
     }
 
-    // Linear interpolation between two colors
-    function lerpColor(c1, c2, t) {
-      return [
-        Math.round(c1[0] + (c2[0] - c1[0]) * t),
-        Math.round(c1[1] + (c2[1] - c1[1]) * t),
-        Math.round(c1[2] + (c2[2] - c1[2]) * t)
-      ];
-    }
-
-    // Core Gradient Generation Logic
     function generateGradient() {
       const err = document.getElementById('error');
       if (!loadedFileText) {
@@ -194,60 +176,56 @@
 
       const c1 = parseColor(document.getElementById('color1').value);
       const c2 = parseColor(document.getElementById('color2').value);
-      const c3 = parseColor(document.getElementById('color3').value);
 
-      if (!c1) {
-        err.innerText = "Start color is invalid. Use R,G,B format (e.g., 157,0,255).";
+      if (!c1 || !c2) {
+        err.innerText = "Both colors must be valid R,G,B format (e.g., 157,0,255).";
         err.style.display = 'block';
         return;
       }
 
-      const hasMid = c2 !== null;
-      const hasEnd = c3 !== null;
       let finalOutput = "";
       
-      // Count non-space characters to distribute the gradient smoothly
-      const totalChars = loadedFileText.replace(/ /g, '').length;
-      let currentCharIndex = 0;
+      // Split the text into lines to find the middle X position of every line
+      const lines = loadedFileText.split('\n');
 
-      for (let i = 0; i < loadedFileText.length; i++) {
-        const char = loadedFileText[i];
-        
-        // Keep spaces and newlines unchanged so the ASCII art isn't broken
-        if (char === ' ' || char === '\n' || char === '\r') {
-          finalOutput += char;
-          continue;
-        }
+      for (let l = 0; l < lines.length; l++) {
+        const line = lines[l];
+        // Find how long this specific line is
+        const lineLength = line.length;
+        // Calculate the exact middle character index for this line
+        const middleIndex = Math.floor(lineLength / 2);
 
-        // Calculate how far along the text we are (0.0 to 1.0)
-        let progress = currentCharIndex / (totalChars - 1 || 1); 
-        let currentColor;
-
-        // Blend colors based on how many were provided
-        if (hasMid && hasEnd) {
-          if (progress <= 0.5) {
-            currentColor = lerpColor(c1, c2, progress * 2);
-          } else {
-            currentColor = lerpColor(c2, c3, (progress - 0.5) * 2);
+        for (let i = 0; i < lineLength; i++) {
+          const char = line[i];
+          
+          // Keep spaces unchanged so we don't break the ASCII art
+          if (char === ' ' || char === '\r') {
+            finalOutput += char;
+            continue;
           }
-        } else if (hasEnd) {
-          currentColor = lerpColor(c1, c3, progress);
-        } else {
-          currentColor = c1;
-        }
 
-        // Create the ANSI escape code for this specific character
-        const ansiCode = `\x1b[38;2;${currentColor[0]};${currentColor[1]};${currentColor[2]}m`;
-        const resetCode = `\x1b[0m`;
+          // If the character is in the left half, use c1, else use c2
+          let currentColor;
+          if (i < middleIndex) {
+            currentColor = c1;
+          } else {
+            currentColor = c2;
+          }
+
+          const ansiCode = `\x1b[38;2;${currentColor[0]};${currentColor[1]};${currentColor[2]}m`;
+          const resetCode = `\x1b[0m`;
+          
+          finalOutput += ansiCode + char + resetCode;
+        }
         
-        finalOutput += ansiCode + char + resetCode;
-        currentCharIndex++;
+        // Add the newline back unless it's the last line
+        if (l < lines.length - 1) {
+          finalOutput += '\n';
+        }
       }
 
-      // 1. Output Raw Text for downloading
       document.getElementById('output').innerText = finalOutput;
       
-      // 2. Output Live Preview using ansi_up library
       const ansi_up = new AnsiUp();
       document.getElementById('preview').innerHTML = ansi_up.ansi_to_html(finalOutput);
       
@@ -255,14 +233,13 @@
       window.lastGeneratedText = finalOutput;
     }
 
-    // Download the generated file
     function downloadOutput() {
       if (!window.lastGeneratedText) return;
       const blob = new Blob([window.lastGeneratedText], { type: 'text/plain' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'delirium_gradient.txt';
+      a.download = 'half_half_art.txt';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
