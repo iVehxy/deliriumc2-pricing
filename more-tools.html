@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DELIRIUMC2 | More Tools</title>
+<!-- Library for QR Codes -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap');
+
+  :root {
+    --bg: #050008; --card: #11001c; --sidebar: #0a0012; --purple: #9d00ff;
+    --purple-soft: rgba(157, 0, 255, 0.25); --red: #ff003c; --text: #ffffff;
+    --muted: #9a8fa8; --line: rgba(255, 255, 255, 0.06);
+  }
+
+  * { box-sizing: border-box; }
+  body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar { width: 250px; background-color: var(--sidebar); border-right: 1px solid var(--purple-soft); padding: 30px 20px; display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto; }
+  .sidebar-logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 40px; text-decoration: none; color: var(--text); }
+  .sidebar-logo span { color: var(--purple); }
+  .sidebar-logo em { font-style: normal; color: var(--red); }
+  .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+  .sidebar-menu li { margin-bottom: 10px; }
+  .sidebar-menu a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.9rem; display: block; padding: 12px 15px; border-radius: 8px; transition: 0.2s; border-left: 3px solid transparent; }
+  .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(157, 0, 255, 0.1); color: var(--text); border-left-color: var(--purple); }
+  .dropdown-menu { list-style: none; padding: 0; margin: 5px 0 0 15px; display: none; }
+  .dropdown-menu.active { display: block; }
+  .dropdown-menu a { font-size: 0.85rem; padding: 8px 15px; border-left: 2px solid var(--purple-soft); }
+
+  /* MAIN CONTENT */
+  .main-content { margin-left: 250px; padding: 50px 20px 100px; flex: 1; display: flex; flex-direction: column; align-items: center; background-image: radial-gradient(circle at 15% 10%, rgba(157, 0, 255, 0.10), transparent 30%), radial-gradient(circle at 85% 90%, rgba(255, 0, 60, 0.10), transparent 30%); }
+  .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; text-align: center;}
+  .page-title span { color: var(--purple); text-shadow: 0 0 20px rgba(157,0,255,0.6); }
+
+  .tool-container { width: 100%; max-width: 800px; background: var(--card); border: 1px solid var(--purple-soft); border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+  /* TABS */
+  .tabs { display: flex; gap: 5px; border-bottom: 1px solid var(--line); margin-bottom: 20px; flex-wrap: wrap; }
+  .tab-btn { background: transparent; color: var(--muted); border: none; padding: 10px 15px; font-weight: 600; cursor: pointer; font-size: 0.85rem; border-bottom: 3px solid transparent; transition: 0.2s; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* FORM ELEMENTS */
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600; }
+  textarea, input[type="text"], input[type="number"] { width: 100%; padding: 15px; background: #000; border: 1px solid var(--line); border-radius: 8px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; outline: none; transition: 0.2s; }
+  textarea:focus, input[type="text"]:focus, input[type="number"]:focus { border-color: var(--purple); }
+  
+  .btn { background: var(--purple); color: #fff; border: none; border-radius: 8px; padding: 14px 24px; font-weight: 600; cursor: pointer; transition: 0.2s; letter-spacing: 1px; text-transform: uppercase; width: 100%; margin-bottom: 10px; }
+  .btn:hover { background: var(--red); }
+
+  .result-box { background: rgba(157,0,255,0.05); border: 1px solid var(--purple-soft); border-radius: 8px; padding: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; word-break: break-all; margin-top: 10px; color: var(--text); text-align: center; }
+  
+  .checkbox-group { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; color: var(--muted); font-size: 0.9rem; }
+  .checkbox-group input { width: 18px; height: 18px; accent-color: var(--purple); }
+
+  /* QR CODE SPECIFIC */
+  #qrcode-container { display: flex; justify-content: center; margin-top: 20px; padding: 15px; background: #fff; border-radius: 8px; width: fit-content; margin-left: auto; margin-right: auto; }
+  
+  @media (max-width: 768px) {
+    body { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: relative; padding: 20px; border-right: none; border-bottom: 1px solid var(--purple-soft); }
+    .main-content { margin-left: 0; padding-top: 30px; }
+  }
+</style>
+</head>
+<body>
+
+  <nav class="sidebar">
+    <a href="./" class="sidebar-logo">DELIRIUM<span>C2</span> <em>//</em></a>
+    <ul class="sidebar-menu">
+      <li><a href="./">💰 Pricing Plans</a></li>
+      <li>
+        <a href="#" onclick="toggleDropdown(event)">🛠️ Tools ▾</a>
+        <ul class="dropdown-menu active" id="toolsDropdown">
+          <li><a href="ping/">IP Pinger</a></li>
+          <li><a href="gradient.html">🎨 Gradient Tool</a></li>
+          <li><a href="geo.html">🌍 IP Geolocation</a></li>
+          <li><a href="json.html">🧩 JSON Repair</a></li>
+          <li><a href="devtools.html">⚙️ Dev Tools</a></li>
+          <li><a href="more-tools.html" class="active">🚀 More Tools</a></li> <!-- NEW LINK -->
+        </ul>
+      </li>
+      <li><a href="advertise/">📢 Advertise</a></li>
+      <li><a href="https://t.me/@vsetls" target="_blank">📞 Support</a></li>
+    </ul>
+  </nav>
+
+  <main class="main-content">
+    <h1 class="page-title">MORE <span>TOOLS</span></h1>
+    
+    <div class="tool-container">
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'passgen')">Password</button>
+        <button class="tab-btn" onclick="openTab(event, 'qrcode')">QR Code</button>
+        <button class="tab-btn" onclick="openTab(event, 'uuid')">UUID</button>
+        <button class="tab-btn" onclick="openTab(event, 'lorem')">Lorem Ipsum</button>
+        <button class="tab-btn" onclick="openTab(event, 'case')">Case Converter</button>
+      </div>
+
+      <!-- TAB 1: PASSWORD GENERATOR -->
+      <div id="passgen" class="tab-content active">
+        <div class="form-group">
+          <label class="form-label">Password Length</label>
+          <input type="number" id="passLength" value="16" min="4" max="64">
+        </div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="passSymbols" checked> <label for="passSymbols">Include Symbols (!@#$%^&*)</label>
+        </div>
+        <button class="btn" onclick="generatePassword()">Generate Password</button>
+        <div class="result-box" id="passResult">Click generate...</div>
+      </div>
+
+      <!-- TAB 2: QR CODE GENERATOR -->
+      <div id="qrcode" class="tab-content">
+        <div class="form-group">
+          <label class="form-label">Text or URL</label>
+          <input type="text" id="qrInput" placeholder="https://prices.deliriums.xyz" oninput="generateQR()">
+        </div>
+        <div id="qrcode-container"></div>
+      </div>
+
+      <!-- TAB 3: UUID GENERATOR -->
+      <div id="uuid" class="tab-content">
+        <button class="btn" onclick="generateUUID()">Generate UUID</button>
+        <div class="result-box" id="uuidResult">Click generate...</div>
+      </div>
+
+      <!-- TAB 4: LOREM IPSUM -->
+      <div id="lorem" class="tab-content">
+        <div class="form-group">
+          <label class="form-label">Number of Paragraphs</label>
+          <input type="number" id="loremCount" value="3" min="1" max="10">
+        </div>
+        <button class="btn" onclick="generateLorem()">Generate Text</button>
+        <textarea id="loremResult" rows="6" readonly placeholder="Text will appear here..."></textarea>
+      </div>
+
+      <!-- TAB 5: CASE CONVERTER -->
+      <div id="case" class="tab-content">
+        <div class="form-group">
+          <label class="form-label">Input Text</label>
+          <textarea id="caseInput" rows="3" placeholder="Type text here..." oninput="convertCase()"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">UPPERCASE</label>
+          <input type="text" id="caseUpper" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">lowercase</label>
+          <input type="text" id="caseLower" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Title Case</label>
+          <input type="text" id="caseTitle" readonly>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    function toggleDropdown(event) {
+      event.preventDefault();
+      document.getElementById('toolsDropdown').classList.toggle('active');
+    }
+
+    // TAB LOGIC
+    function openTab(evt, tabName) {
+      const tabContents = document.getElementsByClassName("tab-content");
+      for (let i = 0; i < tabContents.length; i++) { tabContents[i].classList.remove("active"); }
+      
+      const tabBtns = document.getElementsByClassName("tab-btn");
+      for (let i = 0; i < tabBtns.length; i++) { tabBtns[i].classList.remove("active"); }
+      
+      document.getElementById(tabName).classList.add("active");
+      evt.currentTarget.classList.add("active");
+    }
+
+    // PASSWORD GENERATOR LOGIC
+    function generatePassword() {
+      const length = document.getElementById('passLength').value;
+      const includeSymbols = document.getElementById('passSymbols').checked;
+      
+      let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      if (includeSymbols) charset += "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+      
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        password += charset.charAt(Math.floor(Math.random() * charset.length));
+      }
+      document.getElementById('passResult').innerText = password;
+    }
+
+    // QR CODE LOGIC
+    let qrCodeInstance = null;
+    function generateQR() {
+      const text = document.getElementById('qrInput').value;
+      const container = document.getElementById('qrcode-container');
+      container.innerHTML = ""; // Clear previous
+      
+      if (!text) return;
+      
+      qrCodeInstance = new QRCode(container, {
+        text: text,
+        width: 180,
+        height: 180,
+        colorDark : "#000000",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+    }
+
+    // UUID LOGIC
+    function generateUUID() {
+      // Simple UUID v4 generator
+      const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+      document.getElementById('uuidResult').innerText = uuid;
+    }
+
+    // LOREM IPSUM LOGIC
+    function generateLorem() {
+      const count = document.getElementById('loremCount').value;
+      const baseText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ";
+      let result = "";
+      for (let i = 0; i < count; i++) {
+        result += baseText + "\n\n";
+      }
+      document.getElementById('loremResult').value = result.trim();
+    }
+
+    // CASE CONVERTER LOGIC
+    function convertCase() {
+      const input = document.getElementById('caseInput').value;
+      
+      document.getElementById('caseUpper').value = input.toUpperCase();
+      document.getElementById('caseLower').value = input.toLowerCase();
+      
+      const titleCase = input.toLowerCase().split(' ').map(word => {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      }).join(' ');
+      document.getElementById('caseTitle').value = titleCase;
+    }
+  </script>
+</body>
+</html>
