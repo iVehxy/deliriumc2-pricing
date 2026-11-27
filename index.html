@@ -75,7 +75,17 @@
   }
   .page-title span { color: var(--purple); text-shadow: 0 0 20px rgba(157,0,255,0.6); }
   .page-title em { font-style: normal; color: var(--red); text-shadow: 0 0 20px rgba(255,0,60,0.6); }
-  .subtitle { color: var(--muted); letter-spacing: 4px; font-size: 0.8rem; margin: 0 0 50px; text-transform: uppercase; }
+  .subtitle { color: var(--muted); letter-spacing: 4px; font-size: 0.8rem; margin: 0 0 20px; text-transform: uppercase; }
+
+  /* MUSIC PLAYER STYLES */
+  .music-player-container { margin-bottom: 50px; display: flex; justify-content: center; }
+  .music-btn {
+    background: transparent; color: var(--muted); border: 1px solid var(--purple-soft);
+    padding: 10px 20px; border-radius: 20px; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px;
+  }
+  .music-btn:hover { background: rgba(157, 0, 255, 0.1); color: var(--text); border-color: var(--purple); }
+  .music-btn.playing { border-color: var(--red); color: var(--red); box-shadow: 0 0 15px rgba(255, 0, 60, 0.2); }
 
   .section-title {
     width: 100%; max-width: 1200px; margin: 40px 0 20px;
@@ -209,7 +219,6 @@
         <ul class="dropdown-menu active" id="toolsDropdown">
           <li><a href="ping/">IP Pinger</a></li>
           <li><a href="gradient.html">🎨 Gradient Tool</a></li>
-          <!-- ADDED GEOLOCATION TOOL LINK HERE -->
           <li><a href="geo.html">🌍 IP Geolocation</a></li>
         </ul>
       </li>
@@ -222,6 +231,18 @@
   <main class="main-content">
     <h1 class="page-title">DELIRIUM<span>C2</span> <em>//</em> PLANS</h1>
     <p class="subtitle">Choose your plan</p>
+
+    <!-- MUSIC PLAYER START -->
+    <div class="music-player-container">
+      <audio id="bgMusic" loop preload="auto">
+        <source src="music.mp3" type="audio/mpeg">
+      </audio>
+      
+      <button id="musicBtn" class="music-btn" onclick="toggleMusic()">
+        <span id="musicIcon">▶</span> <span id="musicText">Play Music</span>
+      </button>
+    </div>
+    <!-- MUSIC PLAYER END -->
 
     <h2 class="section-title">Core Plans</h2>
     <div class="grid">
@@ -477,6 +498,26 @@
         btn.innerText = 'COPIED ✓';
         setTimeout(() => btn.innerText = 'COPY', 1800);
       });
+    }
+
+    // MUSIC PLAYER LOGIC
+    function toggleMusic() {
+      const audio = document.getElementById('bgMusic');
+      const btn = document.getElementById('musicBtn');
+      const icon = document.getElementById('musicIcon');
+      const text = document.getElementById('musicText');
+
+      if (audio.paused) {
+        audio.play();
+        icon.innerText = '❚❚'; // Pause icon
+        text.innerText = 'Pause Music';
+        btn.classList.add('playing');
+      } else {
+        audio.pause();
+        icon.innerText = '▶'; // Play icon
+        text.innerText = 'Play Music';
+        btn.classList.remove('playing');
+      }
     }
   </script>
 </body>
