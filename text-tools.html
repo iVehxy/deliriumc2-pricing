@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DELIRIUMC2 | Text Tools</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap');
+  :root { --bg: #050008; --card: #11001c; --sidebar: #0a0012; --purple: #9d00ff; --purple-soft: rgba(157, 0, 255, 0.25); --red: #ff003c; --text: #ffffff; --muted: #9a8fa8; --line: rgba(255, 255, 255, 0.06); }
+  * { box-sizing: border-box; }
+  body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; display: flex; min-height: 100vh; }
+  .sidebar { width: 250px; background-color: var(--sidebar); border-right: 1px solid var(--purple-soft); padding: 30px 20px; display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto; }
+  .sidebar-logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 40px; text-decoration: none; color: var(--text); }
+  .sidebar-logo span { color: var(--purple); } .sidebar-logo em { font-style: normal; color: var(--red); }
+  .sidebar-menu { list-style: none; padding: 0; margin: 0; } .sidebar-menu li { margin-bottom: 10px; }
+  .sidebar-menu a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.9rem; display: block; padding: 12px 15px; border-radius: 8px; transition: 0.2s; border-left: 3px solid transparent; }
+  .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(157, 0, 255, 0.1); color: var(--text); border-left-color: var(--purple); }
+  .dropdown-menu { list-style: none; padding: 0; margin: 5px 0 0 15px; display: none; } .dropdown-menu.active { display: block; }
+  .dropdown-menu a { font-size: 0.85rem; padding: 8px 15px; border-left: 2px solid var(--purple-soft); }
+  .main-content { margin-left: 250px; padding: 50px 20px 100px; flex: 1; display: flex; flex-direction: column; align-items: center; background-image: radial-gradient(circle at 15% 10%, rgba(157, 0, 255, 0.10), transparent 30%), radial-gradient(circle at 85% 90%, rgba(255, 0, 60, 0.10), transparent 30%); }
+  .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; text-align: center;} .page-title span { color: var(--purple); text-shadow: 0 0 20px rgba(157,0,255,0.6); }
+  .tool-container { width: 100%; max-width: 800px; background: var(--card); border: 1px solid var(--purple-soft); border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+  .tabs { display: flex; gap: 5px; border-bottom: 1px solid var(--line); margin-bottom: 20px; flex-wrap: wrap; }
+  .tab-btn { background: transparent; color: var(--muted); border: none; padding: 10px 15px; font-weight: 600; cursor: pointer; font-size: 0.85rem; border-bottom: 3px solid transparent; transition: 0.2s; }
+  .tab-btn:hover { color: var(--text); } .tab-btn.active { color: var(--purple); border-bottom-color: var(--purple); }
+  .tab-content { display: none; } .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  .form-group { margin-bottom: 20px; } .form-label { display: block; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600; }
+  textarea, input[type="text"] { width: 100%; padding: 15px; background: #000; border: 1px solid var(--line); border-radius: 8px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; outline: none; transition: 0.2s; }
+  textarea:focus, input[type="text"]:focus { border-color: var(--purple); }
+  .btn { background: var(--purple); color: #fff; border: none; border-radius: 8px; padding: 14px 24px; font-weight: 600; cursor: pointer; transition: 0.2s; letter-spacing: 1px; text-transform: uppercase; width: 100%; margin-bottom: 10px; }
+  .btn:hover { background: var(--red); }
+  .result-box { background: rgba(157,0,255,0.05); border: 1px solid var(--purple-soft); border-radius: 8px; padding: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; word-break: break-all; margin-top: 10px; color: var(--text); }
+  .diff-container { display: flex; gap: 10px; } .diff-container textarea { width: 50%; }
+  @media (max-width: 768px) { body { flex-direction: column; } .sidebar { width: 100%; height: auto; position: relative; padding: 20px; border-right: none; border-bottom: 1px solid var(--purple-soft); } .main-content { margin-left: 0; padding-top: 30px; } .diff-container { flex-direction: column; } .diff-container textarea { width: 100%; } }
+</style>
+</head>
+<body>
+  <nav class="sidebar">
+    <a href="./" class="sidebar-logo">DELIRIUM<span>C2</span> <em>//</em></a>
+    <ul class="sidebar-menu">
+      <li><a href="./">💰 Pricing Plans</a></li>
+      <li>
+        <a href="#" onclick="toggleDropdown(event)">🛠️ Tools ▾</a>
+        <ul class="dropdown-menu active" id="toolsDropdown">
+          <li><a href="ping/">IP Pinger</a></li>
+          <li><a href="gradient.html">🎨 Gradient Tool</a></li>
+          <li><a href="geo.html">🌍 IP Geolocation</a></li>
+          <li><a href="json.html">🧩 JSON Repair</a></li>
+          <li><a href="devtools.html">⚙️ Dev Tools</a></li>
+          <li><a href="more-tools.html">🚀 More Tools</a></li>
+          <li><a href="osint.html">🕵️ OSINT Tools</a></li>
+          <li><a href="text-tools.html" class="active">📝 Text Tools</a></li>
+        </ul>
+      </li>
+      <li><a href="advertise/">📢 Advertise</a></li>
+      <li><a href="https://t.me/@vsetls" target="_blank">📞 Support</a></li>
+    </ul>
+  </nav>
+
+  <main class="main-content">
+    <h1 class="page-title">TEXT <span>TOOLS</span></h1>
+    <div class="tool-container">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'diff')">Diff Checker</button>
+        <button class="tab-btn" onclick="openTab(event, 'textclean')">Text Cleaner</button>
+        <button class="tab-btn" onclick="openTab(event, 'binary')">Binary/Hex</button>
+        <button class="tab-btn" onclick="openTab(event, 'morse')">Morse Code</button>
+      </div>
+
+      <!-- Diff Checker -->
+      <div id="diff" class="tab-content active">
+        <div class="diff-container">
+          <textarea id="diff1" rows="6" placeholder="Original Text"></textarea>
+          <textarea id="diff2" rows="6" placeholder="Changed Text"></textarea>
+        </div>
+        <button class="btn" onclick="checkDiff()" style="margin-top:15px;">Compare Texts</button>
+        <div class="result-box" id="diffResult">Differences will appear here...</div>
+      </div>
+
+      <!-- Text Cleaner -->
+      <div id="textclean" class="tab-content">
+        <div class="form-group">
+          <label class="form-label">Input Text</label>
+          <textarea id="cleanInput" rows="4" placeholder="Paste list with duplicates..."></textarea>
+        </div>
+        <button class="btn" onclick="cleanText()">Remove Duplicates & Reverse</button>
+        <div class="result-box" id="cleanResult">Result will appear here...</div>
+      </div>
+
+      <!-- Binary/Hex -->
+      <div id="binary" class="tab-content">
+        <div class="form-group">
+          <label class="form-label">Input Text / Number</label>
+          <input type="text" id="binInput" placeholder="e.g. Hello or 255" oninput="convertBase()">
+        </div>
+        <div class="form-group"><label class="form-label">Binary</label><div class="result-box" id="binOut">...</div></div>
+        <div class="form-group"><label class="form-label">Hexadecimal</label><div class="result-box" id="hexOut">...</div></div>
+        <div class="form-group"><label class="form-label">Decimal</label><div class="result-box" id="decOut">...</div></div>
+      </div>
+
+      <!-- Morse Code -->
+      <div id="morse" class="tab-content">
+        <div class="form-group">
+          <label class="form-label">Text</label>
+          <input type="text" id="morseInput" placeholder="Type text here..." oninput="toMorse()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Morse Code</label>
+          <div class="result-box" id="morseOut">.... . .-.. .-.. ---</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function toggleDropdown(event) { event.preventDefault(); document.getElementById('toolsDropdown').classList.toggle('active'); }
+    function openTab(evt, tabName) {
+      const tabContents = document.getElementsByClassName("tab-content"); for (let i = 0; i < tabContents.length; i++) { tabContents[i].classList.remove("active"); }
+      const tabBtns = document.getElementsByClassName("tab-btn"); for (let i = 0; i < tabBtns.length; i++) { tabBtns[i].classList.remove("active"); }
+      document.getElementById(tabName).classList.add("active"); evt.currentTarget.classList.add("active");
+    }
+
+    // DIFF CHECKER
+    function checkDiff() {
+      const t1 = document.getElementById('diff1').value;
+      const t2 = document.getElementById('diff2').value;
+      if (t1 === t2) { document.getElementById('diffResult').innerHTML = "<span style='color:#00ff00'>No differences found.</span>"; return; }
+      const lines1 = t1.split('\n'); const lines2 = t2.split('\n');
+      let html = "";
+      const maxLines = Math.max(lines1.length, lines2.length);
+      for (let i = 0; i < maxLines; i++) {
+        if (lines1[i] !== lines2[i]) {
+          html += `<div style='color:#ff003c'>Line ${i+1} differs:</div>`;
+          html += `<div style='color:#ff003c'>- ${lines1[i] || '(empty)'}</div>`;
+          html += `<div style='color:#00ff00'>+ ${lines2[i] || '(empty)'}</div><br>`;
+        }
+      }
+      document.getElementById('diffResult').innerHTML = html || "Differences found, but structure is too complex to display.";
+    }
+
+    // TEXT CLEANER
+    function cleanText() {
+      const input = document.getElementById('cleanInput').value;
+      if (!input) return;
+      const uniqueLines = [...new Set(input.split('\n'))];
+      const reversed = uniqueLines.reverse().join('\n');
+      document.getElementById('cleanResult').innerText = reversed;
+    }
+
+    // BINARY/HEX CONVERTER
+    function convertBase() {
+      const input = document.getElementById('binInput').value;
+      if (!input) { document.getElementById('binOut').innerText = '...'; document.getElementById('hexOut').innerText = '...'; document.getElementById('decOut').innerText = '...'; return; }
+      
+      // If it's a number, convert to string first
+      if (/^\d+$/.test(input)) {
+        const num = parseInt(input);
+        document.getElementById('binOut').innerText = num.toString(2);
+        document.getElementById('hexOut').innerText = num.toString(16).toUpperCase();
+        document.getElementById('decOut').innerText = num.toString(10);
+      } else {
+        // If it's text, convert to char codes
+        let binary = ""; let hex = ""; let dec = "";
+        for (let i = 0; i < input.length; i++) {
+          const code = input.charCodeAt(i);
+          binary += code.toString(2).padStart(8, '0') + " ";
+          hex += code.toString(16).padStart(2, '0').toUpperCase() + " ";
+          dec += code + " ";
+        }
+        document.getElementById('binOut').innerText = binary.trim();
+        document.getElementById('hexOut').innerText = hex.trim();
+        document.getElementById('decOut').innerText = dec.trim();
+      }
+    }
+
+    // MORSE CODE
+    function toMorse() {
+      const input = document.getElementById('morseInput').value.toUpperCase();
+      const morseMap = { 'A':'.-', 'B':'-...', 'C':'-.-.', 'D':'-..', 'E':'.', 'F':'..-.', 'G':'--.', 'H':'....', 'I':'..', 'J':'.---', 'K':'-.-', 'L':'.-..', 'M':'--', 'N':'-.', 'O':'---', 'P':'.--.', 'Q':'--.-', 'R':'.-.', 'S':'...', 'T':'-', 'U':'..-', 'V':'...-', 'W':'.--', 'X':'-..-', 'Y':'-.--', 'Z':'--..', '1':'.----', '2':'..---', '3':'...--', '4':'....-', '5':'.....', '6':'-....', '7':'--...', '8':'---..', '9':'----.', '0':'-----', ' ': '/' };
+      const output = input.split('').map(c => morseMap[c] || '').join(' ');
+      document.getElementById('morseOut').innerText = output || "Type text to translate...";
+    }
+  </script>
+</body>
+</html>
