@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DELIRIUMC2 | JSON Repair Tool</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap');
+
+  :root {
+    --bg: #050008; --card: #11001c; --sidebar: #0a0012; --purple: #9d00ff;
+    --purple-soft: rgba(157, 0, 255, 0.25); --red: #ff003c; --text: #ffffff;
+    --muted: #9a8fa8; --line: rgba(255, 255, 255, 0.06);
+  }
+
+  * { box-sizing: border-box; }
+  body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; display: flex; min-height: 100vh; }
+
+  /* SIDEBAR STYLES */
+  .sidebar { width: 250px; background-color: var(--sidebar); border-right: 1px solid var(--purple-soft); padding: 30px 20px; display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto; }
+  .sidebar-logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 40px; text-decoration: none; color: var(--text); }
+  .sidebar-logo span { color: var(--purple); }
+  .sidebar-logo em { font-style: normal; color: var(--red); }
+  .sidebar-menu { list-style: none; padding: 0; margin: 0; }
+  .sidebar-menu li { margin-bottom: 10px; }
+  .sidebar-menu a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: 0.9rem; display: block; padding: 12px 15px; border-radius: 8px; transition: 0.2s; border-left: 3px solid transparent; }
+  .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(157, 0, 255, 0.1); color: var(--text); border-left-color: var(--purple); }
+  .dropdown-menu { list-style: none; padding: 0; margin: 5px 0 0 15px; display: none; }
+  .dropdown-menu.active { display: block; }
+  .dropdown-menu a { font-size: 0.85rem; padding: 8px 15px; border-left: 2px solid var(--purple-soft); }
+
+  /* MAIN CONTENT */
+  .main-content { margin-left: 250px; padding: 50px 20px 100px; flex: 1; display: flex; flex-direction: column; align-items: center; background-image: radial-gradient(circle at 15% 10%, rgba(157, 0, 255, 0.10), transparent 30%), radial-gradient(circle at 85% 90%, rgba(255, 0, 60, 0.10), transparent 30%); }
+  .page-title { font-size: 2rem; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; text-align: center;}
+  .page-title span { color: var(--purple); text-shadow: 0 0 20px rgba(157,0,255,0.6); }
+
+  .tool-container { width: 100%; max-width: 900px; background: var(--card); border: 1px solid var(--purple-soft); border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+  
+  .editor-wrapper { display: flex; gap: 20px; height: 400px; }
+  @media (max-width: 768px) { .editor-wrapper { flex-direction: column; height: auto; } }
+
+  .editor-box { flex: 1; display: flex; flex-direction: column; }
+  .editor-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: 600; }
+  
+  textarea { width: 100%; height: 100%; min-height: 300px; background: #000; border: 1px solid var(--line); border-radius: 8px; color: #fff; font-family: 'JetBrains Mono', monospace; padding: 15px; font-size: 0.85rem; resize: none; outline: none; transition: 0.2s; line-height: 1.5; }
+  textarea:focus { border-color: var(--purple); }
+  textarea.error { border-color: var(--red); box-shadow: 0 0 10px rgba(255,0,60,0.2); }
+  textarea.success { border-color: #00ff00; box-shadow: 0 0 10px rgba(0,255,0,0.1); }
+
+  .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+  .btn { background: var(--purple); color: #fff; border: none; border-radius: 8px; padding: 14px 24px; font-weight: 600; cursor: pointer; transition: 0.2s; letter-spacing: 1px; text-transform: uppercase; flex: 1; }
+  .btn:hover { background: var(--red); }
+  .btn.secondary { background: transparent; border: 1px solid var(--purple-soft); color: var(--muted); }
+  .btn.secondary:hover { background: rgba(157, 0, 255, 0.1); color: var(--text); border-color: var(--purple); }
+
+  .status-msg { margin-top: 15px; font-size: 0.9rem; text-align: center; font-weight: 600; display: none; padding: 10px; border-radius: 8px; }
+  .status-msg.error { display: block; color: var(--red); background: rgba(255,0,60,0.1); border: 1px solid rgba(255,0,60,0.3); }
+  .status-msg.success { display: block; color: #00ff00; background: rgba(0,255,0,0.1); border: 1px solid rgba(0,255,0,0.3); }
+
+  @media (max-width: 768px) {
+    body { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: relative; padding: 20px; border-right: none; border-bottom: 1px solid var(--purple-soft); }
+    .main-content { margin-left: 0; padding-top: 30px; }
+    .btn-group { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+  <nav class="sidebar">
+    <a href="./" class="sidebar-logo">DELIRIUM<span>C2</span> <em>//</em></a>
+    <ul class="sidebar-menu">
+      <li><a href="./">💰 Pricing Plans</a></li>
+      <li>
+        <a href="#" onclick="toggleDropdown(event)">🛠️ Tools ▾</a>
+        <ul class="dropdown-menu active" id="toolsDropdown">
+          <li><a href="ping/">IP Pinger</a></li>
+          <li><a href="gradient.html">🎨 Gradient Tool</a></li>
+          <li><a href="geo.html">🌍 IP Geolocation</a></li>
+          <li><a href="json.html" class="active">🧩 JSON Repair</a></li> <!-- NEW LINK -->
+        </ul>
+      </li>
+      <li><a href="advertise/">📢 Advertise</a></li>
+      <li><a href="https://t.me/@vsetls" target="_blank">📞 Support</a></li>
+    </ul>
+  </nav>
+
+  <main class="main-content">
+    <h1 class="page-title">JSON <span>Repair & Validator</span></h1>
+    
+    <div class="tool-container">
+      <div class="editor-wrapper">
+        <div class="editor-box">
+          <div class="editor-label">Input (Broken JSON)</div>
+          <textarea id="jsonInput" placeholder='Paste your JSON here...&#10;Example: {"name": "Delirium", "active": true,}' spellcheck="false"></textarea>
+        </div>
+        <div class="editor-box">
+          <div class="editor-label">Output (Repaired JSON)</div>
+          <textarea id="jsonOutput" placeholder="Repaired JSON will appear here..." readonly spellcheck="false"></textarea>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn" onclick="repairJSON()">Repair JSON</button>
+        <button class="btn secondary" onclick="clearAll()">Clear</button>
+      </div>
+
+      <div id="statusMsg" class="status-msg"></div>
+    </div>
+  </main>
+
+  <script>
+    function toggleDropdown(event) {
+      event.preventDefault();
+      document.getElementById('toolsDropdown').classList.toggle('active');
+    }
+
+    function clearAll() {
+      document.getElementById('jsonInput').value = '';
+      document.getElementById('jsonOutput').value = '';
+      document.getElementById('jsonInput').className = '';
+      document.getElementById('jsonOutput').className = '';
+      document.getElementById('statusMsg').className = 'status-msg';
+      document.getElementById('statusMsg').innerText = '';
+    }
+
+    function repairJSON() {
+      const input = document.getElementById('jsonInput');
+      const output = document.getElementById('jsonOutput');
+      const status = document.getElementById('statusMsg');
+      
+      let text = input.value.trim();
+      if (!text) {
+        showStatus('Please paste some JSON first.', 'error');
+        return;
+      }
+
+      // Reset classes
+      input.className = '';
+      output.className = '';
+      status.className = 'status-msg';
+
+      try {
+        // 1. Try to parse it normally first
+        const parsed = JSON.parse(text);
+        // If it parses, just pretty-print it
+        output.value = JSON.stringify(parsed, null, 2);
+        showStatus('✅ Valid JSON! Formatted successfully.', 'success');
+        input.classList.add('success');
+        output.classList.add('success');
+        return;
+      } catch (e) {
+        // 2. If it fails, try to repair common issues
+        try {
+          let repairedText = text;
+
+          // Fix 1: Remove trailing commas in objects and arrays
+          repairedText = repairedText.replace(/,\s*([}\]])/g, '$1');
+
+          // Fix 2: Replace single quotes with double quotes (for keys and string values)
+          // This is a very basic regex; complex strings with apostrophes might still fail.
+          repairedText = repairedText.replace(/'([^']*)'/g, '"$1"');
+
+          // Fix 3: Add quotes to unquoted keys
+          repairedText = repairedText.replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
+
+          // Attempt to parse the repaired text
+          const parsed = JSON.parse(repairedText);
+          
+          output.value = JSON.stringify(parsed, null, 2);
+          showStatus('🔧 Repaired successfully! Some formatting issues were fixed.', 'success');
+          input.classList.add('success');
+          output.classList.add('success');
+
+        } catch (repairError) {
+          // If repair fails, show the original error
+          showStatus(`❌ Error: ${e.message}`, 'error');
+          input.classList.add('error');
+          output.value = ''; // Clear output on failure
+        }
+      }
+    }
+
+    function showStatus(msg, type) {
+      const status = document.getElementById('statusMsg');
+      status.innerText = msg;
+      status.className = `status-msg ${type}`;
+    }
+  </script>
+</body>
+</html>
