@@ -26,14 +26,17 @@
   .tab-content { display: none; } .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
   .form-group { margin-bottom: 20px; } .form-label { display: block; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600; }
-  textarea, input[type="text"] { width: 100%; padding: 15px; background: #000; border: 1px solid var(--line); border-radius: 8px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; outline: none; transition: 0.2s; }
-  textarea:focus, input[type="text"]:focus { border-color: var(--purple); }
+  textarea, input[type="text"], select { width: 100%; padding: 15px; background: #000; border: 1px solid var(--line); border-radius: 8px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; outline: none; transition: 0.2s; }
+  textarea:focus, input[type="text"]:focus, select:focus { border-color: var(--purple); }
+  select { cursor: pointer; }
   .btn { background: var(--purple); color: #fff; border: none; border-radius: 8px; padding: 14px 24px; font-weight: 600; cursor: pointer; transition: 0.2s; letter-spacing: 1px; text-transform: uppercase; width: 100%; margin-bottom: 10px; }
   .btn:hover { background: var(--red); }
-  .result-box { background: rgba(157,0,255,0.05); border: 1px solid var(--purple-soft); border-radius: 8px; padding: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; word-break: break-all; margin-top: 10px; color: var(--text); }
+  .result-box { background: rgba(157,0,255,0.05); border: 1px solid var(--purple-soft); border-radius: 8px; padding: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; word-break: break-all; margin-top: 10px; color: var(--text); white-space: pre-wrap; }
   .link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 15px; }
   .link-btn { display: block; text-align: center; padding: 10px; background: rgba(157,0,255,0.1); border: 1px solid var(--purple-soft); border-radius: 6px; color: #fff; text-decoration: none; font-size: 0.8rem; transition: 0.2s; font-family: 'JetBrains Mono', monospace; }
   .link-btn:hover { background: var(--purple); }
+  .copy-btn { background: var(--red); color: #fff; border: none; border-radius: 6px; padding: 8px 14px; font-weight: 600; font-size: 0.75rem; cursor: pointer; letter-spacing: 1px; margin-top: 10px; display: none; }
+  .copy-btn:hover { opacity: 0.85; }
   @media (max-width: 768px) { body { flex-direction: column; } .sidebar { width: 100%; height: auto; position: relative; padding: 20px; border-right: none; border-bottom: 1px solid var(--purple-soft); } .main-content { margin-left: 0; padding-top: 30px; } }
 </style>
 </head>
@@ -52,6 +55,7 @@
           <li><a href="devtools.html">⚙️ Dev Tools</a></li>
           <li><a href="more-tools.html">🚀 More Tools</a></li>
           <li><a href="osint.html" class="active">🕵️ OSINT Tools</a></li>
+          <li><a href="dns.html">🔍 DNS Lookup</a></li>
         </ul>
       </li>
       <li><a href="advertise/">📢 Advertise</a></li>
@@ -67,6 +71,9 @@
         <button class="tab-btn" onclick="openTab(event, 'mac')">MAC Lookup</button>
         <button class="tab-btn" onclick="openTab(event, 'email')">Email Header</button>
         <button class="tab-btn" onclick="openTab(event, 'fake')">Fake ID</button>
+        <button class="tab-btn" onclick="openTab(event, 'subdomain')">Subdomain Finder</button>
+        <button class="tab-btn" onclick="openTab(event, 'whois')">Whois</button>
+        <button class="tab-btn" onclick="openTab(event, 'ipintel')">IP Intel</button>
       </div>
 
       <!-- Username Checker -->
@@ -103,6 +110,39 @@
         <button class="btn" onclick="genFakeID()">Generate Identity</button>
         <div class="result-box" id="fakeResult">Click generate...</div>
       </div>
+
+      <!-- Subdomain Finder -->
+      <div id="subdomain" class="tab-content">
+        <div class="form-group">
+          <label class="form-label">Target Domain (via crt.sh certificate transparency)</label>
+          <input type="text" id="subInput" placeholder="example.com">
+        </div>
+        <button class="btn" onclick="findSubs()">Find Subdomains</button>
+        <div class="result-box" id="subResult">Subdomains will appear here...</div>
+        <button class="copy-btn" id="subCopyBtn" onclick="copyBox('subResult', this)">COPY</button>
+      </div>
+
+      <!-- Whois (RDAP) -->
+      <div id="whois" class="tab-content">
+        <div class="form-group">
+          <label class="form-label">Domain (via RDAP)</label>
+          <input type="text" id="whoisInput" placeholder="example.com">
+        </div>
+        <button class="btn" onclick="lookupWhois()">Whois Lookup</button>
+        <div class="result-box" id="whoisResult">Registration info will appear here...</div>
+        <button class="copy-btn" id="whoisCopyBtn" onclick="copyBox('whoisResult', this)">COPY</button>
+      </div>
+
+      <!-- IP Intel -->
+      <div id="ipintel" class="tab-content">
+        <div class="form-group">
+          <label class="form-label">IP Address (leave blank for your own IP)</label>
+          <input type="text" id="ipInput" placeholder="1.2.3.4">
+        </div>
+        <button class="btn" onclick="lookupIP()">Get IP Intel</button>
+        <div class="result-box" id="ipResult">IP info will appear here...</div>
+        <button class="copy-btn" id="ipCopyBtn" onclick="copyBox('ipResult', this)">COPY</button>
+      </div>
     </div>
   </main>
 
@@ -133,7 +173,6 @@
       const mac = document.getElementById('macInput').value.toUpperCase();
       const result = document.getElementById('macResult');
       if (!mac) return;
-      // Since we can't do real API calls without CORS issues, we give a simulated response
       result.innerHTML = `<strong>MAC:</strong> ${mac}<br><strong>Vendor:</strong> Unknown (Frontend only simulation)<br><em>Note: Real MAC lookup requires a backend server.</em>`;
     }
 
@@ -142,11 +181,10 @@
       const headers = document.getElementById('emailInput').value;
       const result = document.getElementById('emailResult');
       if (!headers) { result.innerText = "Please paste headers."; return; }
-      // Simple regex to find IP addresses in the headers
       const ipRegex = /\b(?:\d{1,3}\.){3}\d{1,3}\b/g;
       const ips = headers.match(ipRegex);
       if (ips) {
-        result.innerHTML = `<strong>Found IPs:</strong><br>${ips.join('<br>')}`;
+        result.innerHTML = `<strong>Found IPs:</strong><br>${[...new Set(ips)].join('<br>')}`;
       } else {
         result.innerText = "No IP addresses found in the headers.";
       }
@@ -159,7 +197,6 @@
       const streets = ["Main St", "Oak Ave", "Pine Rd", "Maple Dr", "Cedar Ln"];
       const cities = ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"];
       const states = ["NY", "CA", "IL", "TX", "AZ"];
-      
       const fn = firstNames[Math.floor(Math.random() * firstNames.length)];
       const ln = lastNames[Math.floor(Math.random() * lastNames.length)];
       const st = Math.floor(Math.random() * 9999) + " " + streets[Math.floor(Math.random() * streets.length)];
@@ -167,8 +204,107 @@
       const state = states[Math.floor(Math.random() * states.length)];
       const zip = Math.floor(10000 + Math.random() * 90000);
       const phone = `(${Math.floor(200 + Math.random() * 800)}) ${Math.floor(100 + Math.random() * 900)}-${Math.floor(1000 + Math.random() * 9000)}`;
-
       document.getElementById('fakeResult').innerHTML = `<strong>Name:</strong> ${fn} ${ln}<br><strong>Address:</strong> ${st}, ${city}, ${state} ${zip}<br><strong>Phone:</strong> ${phone}`;
+    }
+
+    // SUBDOMAIN FINDER (crt.sh)
+    async function findSubs() {
+      const domain = document.getElementById('subInput').value.trim().toLowerCase();
+      const result = document.getElementById('subResult');
+      const copyBtn = document.getElementById('subCopyBtn');
+      copyBtn.style.display = 'none';
+      if (!domain || !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(domain)) { result.textContent = 'Enter a valid domain.'; return; }
+      result.textContent = 'Querying crt.sh... (can take up to 60s on large domains)';
+      try {
+        const r = await fetch(`https://crt.sh/?q=%25.${encodeURIComponent(domain)}&output=json`, { cache: 'no-store' });
+        if (!r.ok) throw new Error('crt.sh returned HTTP ' + r.status);
+        const data = await r.json();
+        const subs = new Set();
+        data.forEach(entry => {
+          entry.name_value.split('\n').forEach(n => {
+            n = n.trim().toLowerCase().replace(/^\*\./, '');
+            if (n.endsWith('.' + domain) || n === domain) subs.add(n);
+          });
+        });
+        if (subs.size === 0) { result.textContent = 'No subdomains found.'; return; }
+        const sorted = [...subs].sort();
+        result.textContent = `Found ${sorted.length} unique subdomains:\n\n` + sorted.join('\n');
+        copyBtn.style.display = 'inline-block';
+      } catch (e) {
+        result.textContent = 'Request failed: ' + e.message + '\n(crt.sh can be slow or rate-limit — try again in a minute)';
+      }
+    }
+
+    // WHOIS (RDAP)
+    async function lookupWhois() {
+      const domain = document.getElementById('whoisInput').value.trim().toLowerCase();
+      const result = document.getElementById('whoisResult');
+      const copyBtn = document.getElementById('whoisCopyBtn');
+      copyBtn.style.display = 'none';
+      if (!domain || !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(domain)) { result.textContent = 'Enter a valid domain.'; return; }
+      result.textContent = 'Querying RDAP...';
+      try {
+        const r = await fetch(`https://rdap.org/domain/${encodeURIComponent(domain)}`, { headers: { 'Accept': 'application/rdap+json' } });
+        if (r.status === 404) { result.textContent = 'Domain not found / not registered.'; return; }
+        if (!r.ok) throw new Error('RDAP returned HTTP ' + r.status);
+        const data = await r.json();
+
+        const registrar = (data.entities || []).find(e => (e.roles || []).includes('registrar'));
+        const registrarName = registrar?.vcardArray?.[1]?.find(f => f[0] === 'fn')?.[3] || 'Unknown';
+        const events = {};
+        (data.events || []).forEach(ev => events[ev.eventAction] = ev.eventDate);
+        const ns = (data.nameservers || []).map(n => n.ldhName).join('\n  ');
+        const status = (data.status || []).join(', ');
+
+        result.textContent =
+          `Domain:        ${data.ldhName || domain}\n` +
+          `Registrar:     ${registrarName}\n` +
+          `Created:       ${events['registration'] || 'N/A'}\n` +
+          `Updated:       ${events['last changed'] || events['last update of RDAP database'] || 'N/A'}\n` +
+          `Expires:       ${events['expiration'] || 'N/A'}\n` +
+          `Status:        ${status || 'N/A'}\n` +
+          `Nameservers:\n  ${ns || 'N/A'}`;
+        copyBtn.style.display = 'inline-block';
+      } catch (e) {
+        result.textContent = 'Request failed: ' + e.message;
+      }
+    }
+
+    // IP INTEL (ipwho.is)
+    async function lookupIP() {
+      const ip = document.getElementById('ipInput').value.trim();
+      const result = document.getElementById('ipResult');
+      const copyBtn = document.getElementById('ipCopyBtn');
+      copyBtn.style.display = 'none';
+      if (ip && !/^[0-9a-fA-F.:]+$/.test(ip)) { result.textContent = 'Invalid IP format.'; return; }
+      result.textContent = 'Querying...';
+      try {
+        const r = await fetch(`https://ipwho.is/${encodeURIComponent(ip)}`);
+        const data = await r.json();
+        if (data.success === false) { result.textContent = 'Error: ' + (data.message || 'Lookup failed.'); return; }
+        result.textContent =
+          `IP:            ${data.ip}\n` +
+          `Type:          ${data.type}\n` +
+          `Country:       ${data.country} (${data.country_code})\n` +
+          `Region:        ${data.region}\n` +
+          `City:          ${data.city}\n` +
+          `Postal:        ${data.postal || 'N/A'}\n` +
+          `Lat/Lon:       ${data.latitude}, ${data.longitude}\n` +
+          `ISP/Org:       ${data.connection?.isp || 'N/A'}\n` +
+          `ASN:           AS${data.connection?.asn || 'N/A'} (${data.connection?.org || 'N/A'})\n` +
+          `Timezone:      ${data.timezone?.id || 'N/A'} (UTC${data.timezone?.utc || ''})`;
+        copyBtn.style.display = 'inline-block';
+      } catch (e) {
+        result.textContent = 'Request failed: ' + e.message;
+      }
+    }
+
+    // COPY HELPER
+    function copyBox(id, btn) {
+      navigator.clipboard.writeText(document.getElementById(id).textContent).then(() => {
+        btn.innerText = 'COPIED ✓';
+        setTimeout(() => btn.innerText = 'COPY', 1800);
+      });
     }
   </script>
 </body>
